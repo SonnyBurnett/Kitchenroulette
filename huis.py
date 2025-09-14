@@ -3,7 +3,8 @@
 # Gang
 #
 class huis:
-  def __init__(self, adres, aantal_personen, gang, naam, voorgerecht, hoofdgerecht, nagerecht):
+  def __init__(self, adres, aantal_personen, gang, naam, voorgerecht, hoofdgerecht, nagerecht,
+               aantal_eters, lijst_eters):
     self.naam = naam
     self.adres = adres
     self.aantal_personen = aantal_personen
@@ -11,6 +12,8 @@ class huis:
     self.voorgerecht = voorgerecht
     self.nagerecht = nagerecht
     self.hoofdgerecht = hoofdgerecht
+    self.aantal_eters = aantal_eters
+    self.lijst_eters = lijst_eters
 
   def set_naam(self, naam):
       self.naam = naam
@@ -33,6 +36,15 @@ class huis:
   def set_hoofdgerecht(self, adres):
       self.hoofdgerecht = adres
 
+  def set_aantal_eters(self, aantal_eters):
+      self.aantal_eters = aantal_eters
+
+  def set_lijst_eters(self, lijst_eters):
+      self.lijst_eters = lijst_eters
+
+  def add_eter(self, eter):
+      self.lijst_eters.append(eter)
+
   def get_naam(self):
       return self.naam
 
@@ -54,8 +66,16 @@ class huis:
   def get_hoofdgerecht(self):
       return self.hoofdgerecht
 
+  def get_aantal_eters(self):
+      return self.aantal_eters
+
+  def get_lijst_eters(self):
+      return self.lijst_eters
+
+
   def get_all(self):
       return [self.naam, self.adres, self.aantal_personen,self.gang, self.voorgerecht, self.hoofdgerecht, self.nagerecht]
+
 
 
 
