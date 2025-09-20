@@ -4,6 +4,7 @@ from itertools import combinations
 from itertools import permutations
 import random
 import collections
+from tabulate import tabulate
 
 
 def get_deelnemers():
@@ -82,18 +83,39 @@ def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
 
 
 def wijs_eter_aan_koker_toe(koker, eter1, gang):
-
     if gang == "voorgerecht":
         eter1.set_voorgerecht(koker.get_adres())
-
     if gang == "hoofdgerecht":
         eter1.set_hoofdgerecht(koker.get_adres())
-
     if gang == "nagerecht":
         eter1.set_nagerecht(koker.get_adres())
-
-
     return koker, eter1
+
+
+def vind_een_koker(lijst_kokers, lijst_eters, eter_remie, gang):
+    geschikte_koker = ""
+    gelukt = True
+    for koker in lijst_kokers:
+        koker_adres = koker.get_adres()
+        if koker_adres not in eter_remie.get_lijst_eters():
+            if gang == "voorgerecht":
+                lijst_voorgerecht = [veter for veter in lijst_eters if veter.voorgerecht == koker_adres]
+                if eter_remie.get_adres() not in lijst_voorgerecht:
+                    geschikte_koker = koker
+                    break
+            if gang == "hoofdgerecht":
+                lijst_hoofdgerecht = [heter for heter in lijst_eters if heter.hoofdgerecht == koker_adres]
+                if eter_remie.get_adres() not in lijst_hoofdgerecht:
+                    geschikte_koker = koker
+                    break
+            if gang == "nagerecht":
+                lijst_nagerecht = [neter for neter in lijst_eters if neter.nagerecht == koker_adres]
+                if eter_remie.get_adres() not in lijst_nagerecht:
+                    geschikte_koker = koker
+                    break
+    if geschikte_koker == "":
+        gelukt = False
+    return geschikte_koker, gelukt
 
 
 
@@ -148,9 +170,14 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                     if not vlag_eter3:
                                         for eter3 in lijst_eters:
                                             if eter3.get_adres() not in eters_al_toegewezen:
-                                                koker, eter3 = wijs_eter_aan_koker_toe(koker, eter3, gang)
-                                                koker.add_eter(eter3.get_adres())
-                                                eter3.add_eter(koker.get_adres())
+                                                koker_nieuw, gevonden = vind_een_koker(lijst_kokers, lijst_eters, eter3, gang)
+                                                if not gevonden:
+                                                    print("eter 3:", eter3.get_adres(), "geen koker kunnen vinden")
+                                                    koker_nieuw = koker
+
+                                                koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3, gang)
+                                                koker_nieuw.add_eter(eter3.get_adres())
+                                                eter3.add_eter(koker_nieuw.get_adres())
                                                 eter1.add_eter(eter3.get_adres())
                                                 eter3.add_eter(eter1.get_adres())
                                                 eter2.add_eter(eter3.get_adres())
@@ -182,21 +209,30 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
 def print_eters(huizen):
     teller = 1
+    tabel_schema = []
+    tabel_schema.append(["naam", "adres", "kookt gang", "eet voorgerecht bij", "eet voorgerecht met",
+                    "eet hoofdgerecht bij", "eet hoofdgerecht met", "eet nagerecht bij", "eet nagerecht met", "aantal personen"])
     for huis in huizen:
-        print("nummer:            ", teller)
-        print("naam:             ", huis.get_naam())
-        print("adres:             ", huis.get_adres())
-        print("Je kookt het:      ", huis.get_gang())
-        print("Voorgerecht:       ", huis.get_voorgerecht(), "samen met", wie_eet_nog_meer_mee("voorgerecht", huis, huizen ))
-        print("Hoofdgerecht:      ", huis.get_hoofdgerecht(), "samen met", wie_eet_nog_meer_mee("hoofdgerecht", huis, huizen ))
-        print("Nagerecht:         ", huis.get_nagerecht(), "samen met", wie_eet_nog_meer_mee("nagerecht", huis, huizen ))
-        print("personen:          ", huis.get_aantal_personen())
-        print()
+        voor_eters = wie_eet_nog_meer_mee("voorgerecht", huis, huizen )
+        hoofd_eters = wie_eet_nog_meer_mee("hoofdgerecht", huis, huizen )
+        na_eters = wie_eet_nog_meer_mee("nagerecht", huis, huizen )
+        # print("nummer:            ", teller)
+        # print("naam:             ", huis.get_naam())
+        # print("adres:             ", huis.get_adres())
+        # print("Je kookt het:      ", huis.get_gang())
+        # print("Voorgerecht:       ", huis.get_voorgerecht(), "samen met", voor_eters)
+        # print("Hoofdgerecht:      ", huis.get_hoofdgerecht(), "samen met", hoofd_eters)
+        # print("Nagerecht:         ", huis.get_nagerecht(), "samen met", na_eters)
+        # print("personen:          ", huis.get_aantal_personen())
+        # print()
+        tabel_schema.append([huis.get_naam(), huis.get_adres(), huis.get_gang(), huis.get_voorgerecht(),voor_eters,
+                             huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.get_aantal_personen()])
         teller += 1
+    return tabel_schema
+
 
 def wie_eet_nog_meer_mee(gang, ik, lijst_huizen):
     andere_eters = []
-
     if gang == "voorgerecht":
         ik_voor = ik.get_voorgerecht()
     if gang == "hoofdgerecht":
@@ -219,6 +255,17 @@ def wie_eet_nog_meer_mee(gang, ik, lijst_huizen):
     return andere_eters
 
 
+def maak_een_dictionairy(schema_lijst):
+    return {index: value for index, value in enumerate(schema_lijst)}
+
+
+def maak_csv_file(schema_tabel):
+    with open('university_records.csv', 'w', newline='') as csvfile:
+        fieldnames = ['name', 'branch', 'year', 'cgpa']
+        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerows(schema_tabel)
+    return csvfile
 
 
 #################################################
@@ -239,8 +286,8 @@ def main():
     lijst_kokers3, lijst_eters3 = maak_een_indeling("nagerecht", lijst_na_hoofdgerecht)
     lijst_na_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3, lijst_kokers3)
 
-    print_eters(lijst_na_nagerecht)
-
+    schema_tabel = print_eters(lijst_na_nagerecht)
+    print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
 
 
 
