@@ -260,12 +260,13 @@ def maak_een_dictionairy(schema_lijst):
 
 
 def maak_csv_file(schema_tabel):
-    with open('university_records.csv', 'w', newline='') as csvfile:
-        fieldnames = ['name', 'branch', 'year', 'cgpa']
+    with open('kitchenroulette_schema.csv', 'w', newline='') as csvfile:
+        fieldnames = ['naam', 'adres', 'kookt gang', 'eet voorgerecht bij','eet voorgerecht met','eet hoofdgerecht bij',
+                      'eet hoofdgerecht met', 'eet nagerecht bij', 'eet nagerecht met', 'aantal personen']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
         writer.writeheader()
-        writer.writerows(schema_tabel)
-    return csvfile
+        #writer.writerows(schema_tabel)
+
 
 
 #################################################
@@ -287,6 +288,8 @@ def main():
     lijst_na_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3, lijst_kokers3)
 
     schema_tabel = print_eters(lijst_na_nagerecht)
+    schema_dict = maak_een_dictionairy(schema_tabel)
+    maak_csv_file(schema_dict)
     print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
 
 
