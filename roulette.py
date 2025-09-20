@@ -132,17 +132,16 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
     for koker in lijst_kokers:
         #zoek eter1
         aantal_kokers_beschikbaar -= 1
-        print("[KOKER]", koker.get_adres(), "kokers", aantal_kokers_beschikbaar, "eters", aantal_eters_niet_ingedeeld)
+        #print("[KOKER]", koker.get_adres(), "kokers", aantal_kokers_beschikbaar, "eters", aantal_eters_niet_ingedeeld)
         vlag_eter1 = False
         vlag_eter2 = False
         vlag_eter3 = True
         if aantal_kokers_beschikbaar == 2 and aantal_eters_niet_ingedeeld == 2:
             vlag_eter2 = True
-            print("nu minder eters toekennen")
+            #print("nu minder eters toekennen")
         if aantal_kokers_beschikbaar ==1 and aantal_eters_niet_ingedeeld == 3:
             vlag_eter3 = False
-            print("nu meer eters toekennen")
-
+            #print("nu meer eters toekennen")
 
         for eter1 in lijst_eters:
             if eter1.get_adres() not in eters_al_toegewezen:
@@ -172,7 +171,7 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                             if eter3.get_adres() not in eters_al_toegewezen:
                                                 koker_nieuw, gevonden = vind_een_koker(lijst_kokers, lijst_eters, eter3, gang)
                                                 if not gevonden:
-                                                    print("eter 3:", eter3.get_adres(), "geen koker kunnen vinden")
+                                                    print("[ERROR]", eter3.get_adres(), "geen koker kunnen vinden")
                                                     koker_nieuw = koker
 
                                                 koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3, gang)
@@ -191,9 +190,6 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                 break
             if vlag_eter1:
                 break
-
-
-
 
     if aantal_eters_niet_ingedeeld > 0:
         print("[ERROR] we hebben nog", aantal_eters_niet_ingedeeld, "eters over")
@@ -259,16 +255,6 @@ def maak_een_dictionairy(schema_lijst):
     return {index: value for index, value in enumerate(schema_lijst)}
 
 
-def maak_csv_file(schema_tabel):
-    with open('kitchenroulette_schema.csv', 'w', newline='') as csvfile:
-        fieldnames = ['naam', 'adres', 'kookt gang', 'eet voorgerecht bij','eet voorgerecht met','eet hoofdgerecht bij',
-                      'eet hoofdgerecht met', 'eet nagerecht bij', 'eet nagerecht met', 'aantal personen']
-        writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
-        writer.writeheader()
-        #writer.writerows(schema_tabel)
-
-
-
 #################################################
 
 def main():
@@ -276,7 +262,6 @@ def main():
     aantallen = verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen)
     huizen = get_list_of_houses(deelnemers)
     huizen = assign_gang(aantallen, huizen)
-
 
     lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
     lijst_na_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
@@ -289,8 +274,10 @@ def main():
 
     schema_tabel = print_eters(lijst_na_nagerecht)
     schema_dict = maak_een_dictionairy(schema_tabel)
-    maak_csv_file(schema_dict)
+
     print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
+    with open('kitchenroulette_schema.txt', 'w') as f:
+        f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
 
 
 
