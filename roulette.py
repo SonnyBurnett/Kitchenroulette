@@ -64,12 +64,14 @@ def assign_gang(aantallen, huizen):
 def maak_een_indeling(huidige_gang, huizen):
     kook_ploeg = [huis for huis in huizen if huis.get_gang() == huidige_gang]
     eet_ploeg = [huis for huis in huizen if huis.get_gang() != huidige_gang]
-    alle_mogelijkheden_eters = list(permutations(eet_ploeg))
-    lijst_eters = list(random.choice(alle_mogelijkheden_eters))
-    alle_mogelijkheden_kokers = list(permutations(kook_ploeg))
-    lijst_kokers = list(random.choice(alle_mogelijkheden_kokers))
+    #alle_mogelijkheden_eters = list(permutations(eet_ploeg))
+    #lijst_eters = list(random.choice(alle_mogelijkheden_eters))
+    random.shuffle(kook_ploeg)
+    random.shuffle(eet_ploeg)
+    #alle_mogelijkheden_kokers = list(permutations(kook_ploeg))
+    #lijst_kokers = list(random.choice(alle_mogelijkheden_kokers))
     print("[INFO] Kokers en eters voor gang", huidige_gang,"in een willekeurige volgorde gezet.")
-    return lijst_kokers, lijst_eters
+    return kook_ploeg, eet_ploeg
 
 
 def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):

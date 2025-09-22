@@ -13,4 +13,3 @@ Warder 80, Kees, 2
 Warder 81, Bert, 2
 Warder 82, Ernie, 2
 Warder 1, Sonny Burnett, 3
-Warder 2, Henk en Ingrid, 2
