@@ -13,3 +13,7 @@ Warder 80, Kees, 2
 Warder 81, Bert, 2
 Warder 82, Ernie, 2
 Warder 1, Sonny Burnett, 3
+Warder 2, Eva Jinek, 2
+Warder 3, Prins Pils, 2
+Warder 4, Maxima, 2
+Warder 5, Amalia, 2

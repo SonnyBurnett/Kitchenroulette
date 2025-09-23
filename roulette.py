@@ -1,11 +1,8 @@
 import huis
 import csv
-from itertools import combinations
-from itertools import permutations
 import random
-import collections
 from tabulate import tabulate
-
+from datetime import datetime
 
 def get_deelnemers():
     deelnemers = list(csv.reader(open("deelnemers.txt")))
@@ -31,12 +28,10 @@ def verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen):
     aantal_hoofdgerecht = x[0]
     aantal_nagerecht = x[0]
     if x[1] == 1:
-        aantal_voorgerecht+=1
+        aantal_nagerecht+=1
     elif x[1] == 2:
         aantal_voorgerecht += 1
-        aantal_hoofdgerecht+=1
-    else:
-        print("good to go")
+        aantal_nagerecht+=1
     print("[INFO] de lijst verdeeld in ", aantal_voorgerecht, "voorgerechten", aantal_hoofdgerecht, "hoofdgerechten", aantal_nagerecht, "nagerechten")
     return [aantal_voorgerecht, aantal_hoofdgerecht, aantal_nagerecht]
 
@@ -122,8 +117,9 @@ def vind_een_koker(lijst_kokers, lijst_eters, eter_remie, gang):
 
 
 def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
-    #print_eters_en_kokers(lijst_kokers, lijst_eters, gang)
-    aantal_kokers_beschikbaar = len(lijst_kokers)+1
+    alles_toegewezen = True
+    originele_lijst = lijst_eters+lijst_kokers
+    aantal_kokers_beschikbaar = len(lijst_kokers)
     aantal_eters_niet_ingedeeld = len(lijst_eters)
     eters_al_toegewezen = []
     alle_eters = []
@@ -132,33 +128,37 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
 
     for koker in lijst_kokers:
-        #zoek eter1
-        aantal_kokers_beschikbaar -= 1
-        #print("[KOKER]", koker.get_adres(), "kokers", aantal_kokers_beschikbaar, "eters", aantal_eters_niet_ingedeeld)
+        #print("koker", koker.get_adres(), "kokers beschikbaar", aantal_kokers_beschikbaar, "eters niet ingedeeld", aantal_eters_niet_ingedeeld)
         vlag_eter1 = False
         vlag_eter2 = False
         vlag_eter3 = True
         if aantal_kokers_beschikbaar == 2 and aantal_eters_niet_ingedeeld == 2:
             vlag_eter2 = True
-            #print("nu minder eters toekennen")
         if aantal_kokers_beschikbaar ==1 and aantal_eters_niet_ingedeeld == 3:
             vlag_eter3 = False
-            #print("nu meer eters toekennen")
+        if aantal_kokers_beschikbaar == 2 and aantal_eters_niet_ingedeeld == 6:
+            vlag_eter3 = False
 
         for eter1 in lijst_eters:
+            #print("[WARN] nu koker", koker.get_adres(), "eter 1: ", eter1.get_adres(), "al toegewezen", eters_al_toegewezen)
             if eter1.get_adres() not in eters_al_toegewezen:
                 if eter1.get_adres() not in koker.get_lijst_eters():
+                    #print("[INFO] eter1 gevonden", eter1.get_adres(), "koker", koker.get_adres())
                     koker, eter1 = wijs_eter_aan_koker_toe(koker, eter1, gang)
                     eters_al_toegewezen.append(eter1.get_adres())
                     koker.add_eter(eter1.get_adres())
                     eter1.add_eter(koker.get_adres())
                     aantal_eters_niet_ingedeeld-=1
                     vlag_eter1 = True
+                    aantal_kokers_beschikbaar -= 1
 
                     if not vlag_eter2:
                         for eter2 in lijst_eters:
+                            #print("[WARN] koker", koker.get_adres(), "nu eter 2: ", eter2.get_adres())
                             if eter2.get_adres() not in eters_al_toegewezen:
                                 if eter2.get_adres() not in koker.get_lijst_eters() and eter2.get_adres() not in eter1.get_lijst_eters():
+                                    #print("[INFO] eter2 gevonden", eter2.get_adres(), "koker", koker.get_adres())
+
                                     koker, eter2 = wijs_eter_aan_koker_toe(koker, eter2, gang)
                                     koker.add_eter(eter2.get_adres())
                                     eter2.add_eter(koker.get_adres())
@@ -170,13 +170,16 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
                                     if not vlag_eter3:
                                         for eter3 in lijst_eters:
+                                            #print("[WARN] nu eter 3: ", eter3.get_adres())
                                             if eter3.get_adres() not in eters_al_toegewezen:
                                                 koker_nieuw, gevonden = vind_een_koker(lijst_kokers, lijst_eters, eter3, gang)
                                                 if not gevonden:
-                                                    print("[ERROR]", eter3.get_adres(), "geen koker kunnen vinden")
+                                                    #print("[ERROR]", eter3.get_adres(), "geen koker kunnen vinden")
                                                     koker_nieuw = koker
 
                                                 koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3, gang)
+                                                #print("[INFO] eter3 gevonden", eter3.get_adres(), "koker", koker.get_adres())
+
                                                 koker_nieuw.add_eter(eter3.get_adres())
                                                 eter3.add_eter(koker_nieuw.get_adres())
                                                 eter1.add_eter(eter3.get_adres())
@@ -195,10 +198,19 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
     if aantal_eters_niet_ingedeeld > 0:
         print("[ERROR] we hebben nog", aantal_eters_niet_ingedeeld, "eters over")
-        print(list(set(alle_eters) - set(eters_al_toegewezen)))
-
-    aangepaste_lijst = lijst_kokers+lijst_eters
-    return aangepaste_lijst
+        for losers in lijst_eters:
+            if losers.get_adres() not in eters_al_toegewezen:
+                print("[ERROR] we hebben nog", losers.get_adres())
+        alles_toegewezen = False
+        return originele_lijst, alles_toegewezen
+    if aantal_kokers_beschikbaar > 0:
+        print("[ERROR] we hebben nog kokers beschikbaar", aantal_kokers_beschikbaar)
+        alles_toegewezen = False
+        return originele_lijst, alles_toegewezen
+    if alles_toegewezen:
+        print("[INFO] indeling van", gang, "succesvol!")
+        aangepaste_lijst = lijst_kokers + lijst_eters
+        return aangepaste_lijst, alles_toegewezen
 
 
 #################################################
@@ -260,26 +272,40 @@ def maak_een_dictionairy(schema_lijst):
 #################################################
 
 def main():
+    start_time = datetime.now()
+
     deelnemers, aantal_huizen, aantal_deelnemers = get_deelnemers()
     aantallen = verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen)
-    huizen = get_list_of_houses(deelnemers)
-    huizen = assign_gang(aantallen, huizen)
 
-    lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
-    lijst_na_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
+    indeling_gelukt = False
+    teller = 0
 
-    lijst_kokers2, lijst_eters2 = maak_een_indeling("hoofdgerecht", lijst_na_voorgerecht)
-    lijst_na_hoofdgerecht = verdeel_eters_over_kokers("hoofdgerecht", lijst_eters2, lijst_kokers2)
+    while not indeling_gelukt and teller < 5:
+        huizen = get_list_of_houses(deelnemers)
+        huizen = assign_gang(aantallen, huizen)
+        lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
+        lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
+        if gelukt_voorgerecht:
+            lijst_kokers2, lijst_eters2 = maak_een_indeling("hoofdgerecht", lijst_na_voorgerecht)
+            lijst_na_hoofdgerecht, gelukt_hoofdgerecht = verdeel_eters_over_kokers("hoofdgerecht", lijst_eters2,
+                                                                                   lijst_kokers2)
+            if gelukt_hoofdgerecht:
+                lijst_kokers3, lijst_eters3 = maak_een_indeling("nagerecht", lijst_na_hoofdgerecht)
+                lijst_na_nagerecht, gelukt_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3,
+                                                                                 lijst_kokers3)
 
-    lijst_kokers3, lijst_eters3 = maak_een_indeling("nagerecht", lijst_na_hoofdgerecht)
-    lijst_na_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3, lijst_kokers3)
-
-    schema_tabel = print_eters(lijst_na_nagerecht)
-    schema_dict = maak_een_dictionairy(schema_tabel)
-
-    print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
-    with open('kitchenroulette_schema.txt', 'w') as f:
-        f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
+        if gelukt_voorgerecht and gelukt_hoofdgerecht and gelukt_nagerecht:
+            indeling_gelukt = True
+            end_time = datetime.now()
+            time_difference = (end_time - start_time).total_seconds()
+            print("Ik deed er: ", time_difference, "seconden over")
+            schema_tabel = print_eters(lijst_na_nagerecht)
+            print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
+            with open('kitchenroulette_schema.txt', 'w') as f:
+                f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
+        else:
+            print("[INFO] Indeling niet gelukt. Start nieuwe poging.")
+        teller += 1
 
 
 
