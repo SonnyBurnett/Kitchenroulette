@@ -5,7 +5,7 @@ from tabulate import tabulate
 from datetime import datetime
 
 def get_deelnemers():
-    deelnemers = list(csv.reader(open("deelnemers.txt")))
+    deelnemers = list(csv.reader(open("deelnemers2025.txt")))
     aantal_deelnemers = sum([int(x[2]) for x in deelnemers])
     aantal_huizen = len(deelnemers)
     print("[INFO]",aantal_deelnemers, "deelnemers uit file deelnemers.txt gelezen")
@@ -17,9 +17,24 @@ def get_list_of_houses(deelnemers):
     huizen = []
     for deelnemer in deelnemers:
         huizen.append(huis.huis(deelnemer[0], int(deelnemer[2]), "", deelnemer[1], "", "", "",
-                                0, []))
+                                0, [],deelnemer[3],deelnemer[4],deelnemer[5],deelnemer[6]))
     print("[INFO]",len(huizen), "huizen in een lijst gezet.")
     return huizen
+
+
+def tel_voorkeur(huizen):
+    aantal_voor = 0
+    aantal_hoofd = 0
+    aantal_na = 0
+    for huis in huizen:
+        print("[WARN]",huis.get_voorkeur1(), huis.get_voorkeur2(), huis.get_voorkeur3(), huis.get_opmerkingen())
+        if huis.get_voorkeur1() == "J":
+            aantal_voor += 1
+        if huis.get_voorkeur2() == "J":
+            aantal_hoofd += 1
+        if huis.get_voorkeur3() == "J":
+            aantal_na += 1
+    return aantal_voor, aantal_hoofd, aantal_na
 
 
 def verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen):
@@ -37,18 +52,44 @@ def verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen):
 
 
 def assign_gang(aantallen, huizen):
-    eerste_groep = aantallen[0]
-    tweede_groep = aantallen[1]
-    derde_groep = aantallen[2]
-    for a in range(0, eerste_groep):
-        huizen[a].set_gang("voorgerecht")
-        huizen[a].set_voorgerecht(huizen[a].get_adres())
-    for b in range(eerste_groep, eerste_groep + tweede_groep):
-        huizen[b].set_gang("hoofdgerecht")
-        huizen[b].set_hoofdgerecht(huizen[b].get_adres())
-    for c in range(eerste_groep + tweede_groep, eerste_groep + tweede_groep + derde_groep):
-        huizen[c].set_gang("nagerecht")
-        huizen[c].set_nagerecht(huizen[c].get_adres())
+    eerste_groep = int(aantallen[0])
+    tweede_groep = int(aantallen[1])
+    derde_groep = int(aantallen[2])
+    aantal1 = 0
+    aantal2 = 0
+    aantal3 = 0
+    gelukt = True
+
+    for huis in huizen:
+        if huis.get_voorkeur1() == "J" and aantal1 < eerste_groep:
+            aantal1 += 1
+            huis.set_gang("voorgerecht")
+            huis.set_voorgerecht(huis.get_adres())
+            print("[INFO]", huis.get_adres(), "kookt het voorgerecht")
+        elif huis.get_voorkeur2() == "J" and aantal2 < tweede_groep:
+            aantal2 += 1
+            huis.set_gang("hoofdgerecht")
+            huis.set_hoofdgerecht(huis.get_adres())
+            print("[INFO]", huis.get_adres(), "kookt het hoofdgerecht")
+        elif huis.get_voorkeur3() == "J" and aantal3 < derde_groep:
+            aantal3 += 1
+            huis.set_gang("nagerecht")
+            huis.set_nagerecht(huis.get_adres())
+            print("[INFO]", huis.get_adres(), "kookt het nagerecht")
+        else:
+            print("[ERROR] major problem, stop everything and start over please!")
+            gelukt = False
+
+    # for a in range(0, eerste_groep):
+    #     huizen[a].set_gang("voorgerecht")
+    #     huizen[a].set_voorgerecht(huizen[a].get_adres())
+    # for b in range(eerste_groep, eerste_groep + tweede_groep):
+    #     huizen[b].set_gang("hoofdgerecht")
+    #     huizen[b].set_hoofdgerecht(huizen[b].get_adres())
+    # for c in range(eerste_groep + tweede_groep, eerste_groep + tweede_groep + derde_groep):
+    #     huizen[c].set_gang("nagerecht")
+    #     huizen[c].set_nagerecht(huizen[c].get_adres())
+    print("[INFO] aantal voorgerecht",aantal1, "aantal hoofdgerecht", aantal2, "aantal nagerecht", aantal3)
     print("[INFO] Ieder huis heeft een gang om te koken toegewezen gekregen")
     return huizen
 
@@ -275,6 +316,7 @@ def main():
     start_time = datetime.now()
 
     deelnemers, aantal_huizen, aantal_deelnemers = get_deelnemers()
+
     aantallen = verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen)
 
     indeling_gelukt = False
@@ -282,6 +324,8 @@ def main():
 
     while not indeling_gelukt and teller < 5:
         huizen = get_list_of_houses(deelnemers)
+        aantal_voor, aantal_hoofd, aantal_na = tel_voorkeur(huizen)
+        print("[INFO] voorkeuren", aantal_voor, aantal_hoofd, aantal_na)
         huizen = assign_gang(aantallen, huizen)
         lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
         lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)

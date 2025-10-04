@@ -4,7 +4,7 @@
 #
 class huis:
   def __init__(self, adres, aantal_personen, gang, naam, voorgerecht, hoofdgerecht, nagerecht,
-               aantal_eters, lijst_eters):
+               aantal_eters, lijst_eters, voorkeur1, voorkeur2, voorkeur3, opmerkingen):
     self.naam = naam
     self.adres = adres
     self.aantal_personen = aantal_personen
@@ -14,6 +14,10 @@ class huis:
     self.hoofdgerecht = hoofdgerecht
     self.aantal_eters = aantal_eters
     self.lijst_eters = lijst_eters
+    self.voorkeur1 = voorkeur1
+    self.voorkeur2 = voorkeur2
+    self.voorkeur3 = voorkeur3
+    self.opmerkingen = opmerkingen
 
   def set_naam(self, naam):
       self.naam = naam
@@ -71,6 +75,16 @@ class huis:
 
   def get_lijst_eters(self):
       return self.lijst_eters
+
+  def get_voorkeur1(self):
+      return self.voorkeur1
+  def get_voorkeur2(self):
+      return self.voorkeur2
+  def get_voorkeur3(self):
+      return self.voorkeur3
+  def get_opmerkingen(self):
+      return self.opmerkingen
+
 
 
   def get_all(self):
