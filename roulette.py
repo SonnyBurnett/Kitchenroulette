@@ -13,6 +13,11 @@ def get_deelnemers():
     return deelnemers, aantal_huizen, aantal_deelnemers
 
 
+def get_vorige_keer():
+    vorige_keer = list(csv.reader(open("deel.txt")))
+    return vorige_keer
+
+
 def get_list_of_houses(deelnemers):
     huizen = []
     for deelnemer in deelnemers:
@@ -210,6 +215,7 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                     vlag_eter2 = True
 
                                     if not vlag_eter3:
+
                                         for eter3 in lijst_eters:
                                             #print("[WARN] nu eter 3: ", eter3.get_adres())
                                             if eter3.get_adres() not in eters_al_toegewezen:
@@ -248,6 +254,7 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
         print("[ERROR] we hebben nog kokers beschikbaar", aantal_kokers_beschikbaar)
         alles_toegewezen = False
         return originele_lijst, alles_toegewezen
+
     if alles_toegewezen:
         print("[INFO] indeling van", gang, "succesvol!")
         aangepaste_lijst = lijst_kokers + lijst_eters
@@ -260,6 +267,7 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
 def print_eters(huizen):
     teller = 1
+    gelukt = True
     tabel_schema = []
     tabel_schema.append(["naam", "adres", "kookt gang", "eet voorgerecht bij", "eet voorgerecht met",
                     "eet hoofdgerecht bij", "eet hoofdgerecht met", "eet nagerecht bij", "eet nagerecht met", "aantal personen"])
@@ -267,6 +275,9 @@ def print_eters(huizen):
         voor_eters = wie_eet_nog_meer_mee("voorgerecht", huis, huizen )
         hoofd_eters = wie_eet_nog_meer_mee("hoofdgerecht", huis, huizen )
         na_eters = wie_eet_nog_meer_mee("nagerecht", huis, huizen )
+        if len(hoofd_eters) > 3 :
+            gelukt = False
+            print("[ERREUR]", hoofd_eters)
         # print("nummer:            ", teller)
         # print("naam:             ", huis.get_naam())
         # print("adres:             ", huis.get_adres())
@@ -279,7 +290,7 @@ def print_eters(huizen):
         tabel_schema.append([huis.get_naam(), huis.get_adres(), huis.get_gang(), huis.get_voorgerecht(),voor_eters,
                              huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.get_aantal_personen()])
         teller += 1
-    return tabel_schema
+    return tabel_schema, gelukt
 
 
 def wie_eet_nog_meer_mee(gang, ik, lijst_huizen):
@@ -316,13 +327,18 @@ def main():
     start_time = datetime.now()
 
     deelnemers, aantal_huizen, aantal_deelnemers = get_deelnemers()
+    vorige_keer = get_vorige_keer()
+    gelukt_voorgerecht = False
+    gelukt_hoofdgerecht = False
+    gelukt_nagerecht = False
+
 
     aantallen = verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen)
 
     indeling_gelukt = False
     teller = 0
 
-    while not indeling_gelukt and teller < 5:
+    while not indeling_gelukt and teller < 10:
         huizen = get_list_of_houses(deelnemers)
         aantal_voor, aantal_hoofd, aantal_na = tel_voorkeur(huizen)
         print("[INFO] voorkeuren", aantal_voor, aantal_hoofd, aantal_na)
@@ -338,12 +354,15 @@ def main():
                 lijst_na_nagerecht, gelukt_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3,
                                                                                  lijst_kokers3)
 
+                schema_tabel, gelukt_hoofdgerecht = print_eters(lijst_na_nagerecht)
+
+
         if gelukt_voorgerecht and gelukt_hoofdgerecht and gelukt_nagerecht:
             indeling_gelukt = True
             end_time = datetime.now()
             time_difference = (end_time - start_time).total_seconds()
             print("Ik deed er: ", time_difference, "seconden over")
-            schema_tabel = print_eters(lijst_na_nagerecht)
+
             print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
             with open('kitchenroulette_schema.txt', 'w') as f:
                 f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
