@@ -32,13 +32,14 @@ def tel_voorkeur(huizen):
     aantal_hoofd = 0
     aantal_na = 0
     for huis in huizen:
-        print("[WARN]",huis.get_voorkeur1(), huis.get_voorkeur2(), huis.get_voorkeur3(), huis.get_opmerkingen())
+        #print("[WARN]",huis.get_voorkeur1(), huis.get_voorkeur2(), huis.get_voorkeur3(), huis.get_opmerkingen())
         if huis.get_voorkeur1() == "J":
             aantal_voor += 1
         if huis.get_voorkeur2() == "J":
             aantal_hoofd += 1
         if huis.get_voorkeur3() == "J":
             aantal_na += 1
+    print("[INFO] voorkeur voor voorgerecht", aantal_voor,"voorkeur voor hoofdgerecht", aantal_hoofd,"voorkeur voor nagerecht", aantal_na)
     return aantal_voor, aantal_hoofd, aantal_na
 
 
@@ -70,17 +71,17 @@ def assign_gang(aantallen, huizen):
             aantal1 += 1
             huis.set_gang("voorgerecht")
             huis.set_voorgerecht(huis.get_adres())
-            print("[INFO]", huis.get_adres(), "kookt het voorgerecht")
+            #print("[INFO]", huis.get_adres(), "kookt het voorgerecht")
         elif huis.get_voorkeur2() == "J" and aantal2 < tweede_groep:
             aantal2 += 1
             huis.set_gang("hoofdgerecht")
             huis.set_hoofdgerecht(huis.get_adres())
-            print("[INFO]", huis.get_adres(), "kookt het hoofdgerecht")
+            #print("[INFO]", huis.get_adres(), "kookt het hoofdgerecht")
         elif huis.get_voorkeur3() == "J" and aantal3 < derde_groep:
             aantal3 += 1
             huis.set_gang("nagerecht")
             huis.set_nagerecht(huis.get_adres())
-            print("[INFO]", huis.get_adres(), "kookt het nagerecht")
+            #print("[INFO]", huis.get_adres(), "kookt het nagerecht")
         else:
             print("[ERROR] major problem, stop everything and start over please!")
             gelukt = False
@@ -277,7 +278,7 @@ def print_eters(huizen):
         na_eters = wie_eet_nog_meer_mee("nagerecht", huis, huizen )
         if len(hoofd_eters) > 3 :
             gelukt = False
-            print("[ERREUR]", hoofd_eters)
+            #print("[ERREUR]", hoofd_eters)
         # print("nummer:            ", teller)
         # print("naam:             ", huis.get_naam())
         # print("adres:             ", huis.get_adres())
@@ -317,8 +318,31 @@ def wie_eet_nog_meer_mee(gang, ik, lijst_huizen):
     return andere_eters
 
 
-def maak_een_dictionairy(schema_lijst):
-    return {index: value for index, value in enumerate(schema_lijst)}
+def wie_komt_er_eten(lijst_huizen, lijst_vorige):
+    for huis in lijst_huizen:
+        dit_adres = huis.get_adres()
+        deze_gang = huis.get_gang()
+        #print("[KOKER]", huis.get_adres(), huis.get_gang())
+        for h in lijst_huizen:
+            lijstje_etertjes = []
+            if deze_gang == "voorgerecht":
+                if h.get_voorgerecht() == dit_adres and h.get_adres() != dit_adres:
+                    #print("[ETER VOOR]", h.get_adres())
+                    lijstje_etertjes.append(h.get_adres())
+            if deze_gang == "hoofdgerecht" and h.get_adres() != dit_adres:
+                if h.get_hoofdgerecht() == dit_adres:
+                    #print("[ETER HOOFD]", h.get_adres())
+                    lijstje_etertjes.append(h.get_adres())
+            if deze_gang == "nagerecht" and h.get_adres() != dit_adres:
+                if h.get_nagerecht() == dit_adres:
+                    #print("[ETER NA]", h.get_adres())
+                    lijstje_etertjes.append(h.get_adres())
+        for v in lijst_vorige:
+            if v[0] == dit_adres:
+                #print("[VORIGE]", v)
+                for e in lijstje_etertjes:
+                    if e in v:
+                        print("[ERROR] koker",dit_adres,"heeft vorige keer ook voor eter",e," gekookt")
 
 
 #################################################
@@ -338,10 +362,10 @@ def main():
     indeling_gelukt = False
     teller = 0
 
-    while not indeling_gelukt and teller < 10:
+    while not indeling_gelukt and teller < 15:
         huizen = get_list_of_houses(deelnemers)
         aantal_voor, aantal_hoofd, aantal_na = tel_voorkeur(huizen)
-        print("[INFO] voorkeuren", aantal_voor, aantal_hoofd, aantal_na)
+        #print("[INFO] voorkeuren", aantal_voor, aantal_hoofd, aantal_na)
         huizen = assign_gang(aantallen, huizen)
         lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
         lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
@@ -363,11 +387,13 @@ def main():
             time_difference = (end_time - start_time).total_seconds()
             print("Ik deed er: ", time_difference, "seconden over")
 
+            wie_komt_er_eten(lijst_na_nagerecht, vorige_keer)
+
             print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
             with open('kitchenroulette_schema.txt', 'w') as f:
                 f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
         else:
-            print("[INFO] Indeling niet gelukt. Start nieuwe poging.")
+            print("[ERROR] Indeling niet gelukt. Start nieuwe poging.")
         teller += 1
 
 
