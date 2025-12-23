@@ -1,0 +1,14 @@
+Warder 7,Leon & Suzan,hoofdgerecht,Warder 148
+Warder 18,Hans en Marjan,voorgererecht,Warder 150
+Warder 134,Violette & Frank,voorgerecht, Warder 148,Warder 19
+Warder 190,Jos & Ida,nagerecht,Warder 134,Warder 174
+Warder 174 A,Afra & Jules-Liss Hellingman,hoofdgerecht,Warder 18,Badhuisweg 10
+Warder 189,Jennifer en Rene,voorgerecht,Warder 110,Warder 72
+Warder 40,Gert & Suzanne,nagerecht,Warder 7,Warder 18,Warder 72
+Warder 110,Anita en Ron,hoofdgerecht,Warder 36A,Warder 190
+Warder 72,Taco & Hannie,hoofdgerecht,Warder 150,Warder 134
+Warder 150,Justin & Freya,nagerecht,Warder 19,Warder 36A,Badhuisweg 10
+Warder 19,Tets & Jet,hoofdgerecht,Warder 40,Warder 189
+Warder 148,Gerard & Liebeth,nagerecht,Warder 110,Warder 189
+Warder 36A,Nieke & Tanja,voorgerecht,Warder 7,Warder 174 A
+Badhuisweg 10,Anja & Harry,voorgerecht,Warder 190,Warder 40
