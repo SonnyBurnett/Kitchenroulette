@@ -42,7 +42,9 @@ def wijs_eter_aan_koker_toe(koker, eter1, gang):
 # Doorloop alle kokers
 # Check of de eter die nog niet is toegewezen, al eerder met deze koker heeft gegeten (bij een vorige gang).
 # door de lijst met eters te checken van de toe te wijzen eter.
-# Check dan
+# Check dan of de andere eters bij deze gang, bij deze koker,
+# deze te plaatsen eter nog niet gezien hebben.
+#
 
 def vind_een_koker(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
     print("[CHECK] vind een koker voor ", eter_toe_te_wijzen.adres)
@@ -56,6 +58,8 @@ def vind_een_koker(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
             if gang == "voorgerecht":
                 print("[CHECK] voorgerecht, potentiele koker is", koker_adres)
                 lijst_voorgerecht = [veter for veter in lijst_eters if veter.voorgerecht == koker_adres]
+                print("[CHECK] !!!!", getattr(lijst_voorgerecht[0], gang))
+                print("[CHECK] !!!!", [eter for eter in lijst_eters if getattr(eter, gang) == koker_adres])
                 print("[CHECK] voorgerecht_lijst", [h.adres for h in lijst_voorgerecht])
                 print("[CHECK], eter adres", eter_toe_te_wijzen.get_adres())
                 lijsten = [e.lijst_eters for e in lijst_voorgerecht]
@@ -94,7 +98,21 @@ def vind_een_koker(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
         print("[CHECK] alles is Mislukt")
     return geschikte_koker, gelukt
 
-
+def vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
+    geschikte_koker = ""
+    gelukt = True
+    for koker in lijst_kokers:
+        koker_adres = koker.get_adres()
+        if koker_adres not in eter_toe_te_wijzen.get_lijst_eters():
+            lijst_eters_bij_koker = [eter for eter in lijst_eters if getattr(eter, gang) == koker_adres]
+            wie_hebben_de_eters_al_gezien = [eter.lijst_eters for eter in lijst_eters_bij_koker]
+            platte_lijst_alle_eters = [item for sublijst in wie_hebben_de_eters_al_gezien for item in sublijst]
+            if eter_toe_te_wijzen.get_adres() not in platte_lijst_alle_eters:
+                geschikte_koker = koker
+                break
+    if geschikte_koker == "":
+        gelukt = False
+    return geschikte_koker, gelukt
 
 def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
     alles_toegewezen = True
@@ -147,7 +165,7 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
                                         for eter3 in lijst_eters:
                                             if eter3.get_adres() not in eters_al_toegewezen:
-                                                koker_nieuw, gevonden = vind_een_koker(lijst_kokers, lijst_eters, eter3, gang)
+                                                koker_nieuw, gevonden = vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter3, gang)
                                                 if not gevonden:
                                                     koker_nieuw = koker
 
