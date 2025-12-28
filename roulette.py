@@ -1,4 +1,3 @@
-import huis
 import voorbereiding
 import toon_output
 import random
@@ -83,8 +82,26 @@ def vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
     return geschikte_koker, gelukt
 
 
+
+def registreer_gezien(huis1, huis2):
+    huis1.add_eter(huis2.adres)
+    huis2.add_eter(huis1.adres)
+    return huis1, huis2
+
+
+
 #####################################################################################
+# Doel:        Alle eters verdelen over de kokers
+# Input:       Lijst met eters, lijst met kokers, de gang die het betreft
+# output:      Een complete lijst met alle deelnemers, aangepast aan wie waar gaat eten bij deze gang
+#              Een indicatie of het gelukt is om alle eters aan een koker toe te wijzen.
 #
+# Controles:   Elke eter (huis) mag maar 1 keer toegewezen worden aan een koker
+#              Een eter mag de koker nog niet eerder gezien hebben bij een vorige gang
+#              Een eter mag de andere eters (bij deze koker) nog niet eerder gezien hebben
+#              Elke eter moet toegewezen worden.
+#              Een koker moet minimaal 1 en mag maximaal 3 eters toegewezen krijgen.
+#              [NIEUW] Het aantal personen dat komt eten bij een koker, mag niet meer dan X zijn.
 #
 
 def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
@@ -93,71 +110,57 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
     aantal_kokers_beschikbaar = len(lijst_kokers)
     aantal_eters_niet_ingedeeld = len(lijst_eters)
     eters_al_toegewezen = []
-    alle_eters = []
-    for e in lijst_eters:
-        alle_eters.append(e.get_adres())
-
 
     for koker in lijst_kokers:
-        vlag_eter1 = False
-        vlag_eter2 = False
-        vlag_eter3 = True
-        if aantal_kokers_beschikbaar == 2 and aantal_eters_niet_ingedeeld == 2:
-            vlag_eter2 = True
-        if aantal_kokers_beschikbaar ==1 and aantal_eters_niet_ingedeeld == 3:
-            vlag_eter3 = False
-        if aantal_kokers_beschikbaar == 2 and aantal_eters_niet_ingedeeld == 6:
-            vlag_eter3 = False
+        eter1_toegewezen = False
+        eter2_toegewezen = False
+        eter3_toegewezen = False
+        eter2_toewijzen = True
+        eter3_toewijzen = False
+
+        if aantal_kokers_beschikbaar == aantal_eters_niet_ingedeeld:
+            eter2_toewijzen = eter3_toewijzen = False
+        if aantal_kokers_beschikbaar*3 == aantal_eters_niet_ingedeeld:
+            eter2_toewijzen = eter3_toewijzen = True
 
         for eter1 in lijst_eters:
-            if eter1.get_adres() not in eters_al_toegewezen:
-                if eter1.get_adres() not in koker.get_lijst_eters():
+            if eter1.adres not in eters_al_toegewezen:
+                if eter1.adres not in koker.get_lijst_eters():
                     koker, eter1 = wijs_eter_aan_koker_toe(koker, eter1, gang)
-                    eters_al_toegewezen.append(eter1.get_adres())
-                    koker.add_eter(eter1.get_adres())
-                    eter1.add_eter(koker.get_adres())
-                    aantal_eters_niet_ingedeeld-=1
-                    vlag_eter1 = True
-                    aantal_kokers_beschikbaar -= 1
+                    koker, eter1 = registreer_gezien(koker, eter1)
+                    eters_al_toegewezen.append(eter1.adres)
+                    aantal_eters_niet_ingedeeld, aantal_kokers_beschikbaar = aantal_eters_niet_ingedeeld - 1, aantal_kokers_beschikbaar - 1
+                    eter1_toegewezen = True
 
-                    if not vlag_eter2:
+                    if eter2_toewijzen:
                         for eter2 in lijst_eters:
-                            if eter2.get_adres() not in eters_al_toegewezen:
-                                if eter2.get_adres() not in koker.get_lijst_eters() and eter2.get_adres() not in eter1.get_lijst_eters():
-
+                            if eter2.adres not in eters_al_toegewezen:
+                                if eter2.adres not in koker.get_lijst_eters() and eter2.adres not in eter1.get_lijst_eters():
                                     koker, eter2 = wijs_eter_aan_koker_toe(koker, eter2, gang)
-                                    koker.add_eter(eter2.get_adres())
-                                    eter2.add_eter(koker.get_adres())
-                                    eter1.add_eter(eter2.get_adres())
-                                    eter2.add_eter(eter1.get_adres())
-                                    eters_al_toegewezen.append(eter2.get_adres())
+                                    koker, eter2 = registreer_gezien(koker, eter2)
+                                    eter1, eter2 = registreer_gezien(eter1, eter2)
+                                    eters_al_toegewezen.append(eter2.adres)
                                     aantal_eters_niet_ingedeeld -= 1
-                                    vlag_eter2 = True
+                                    eter2_toegewezen = True
 
-                                    if not vlag_eter3:
-
+                                    if eter3_toewijzen:
                                         for eter3 in lijst_eters:
-                                            if eter3.get_adres() not in eters_al_toegewezen:
+                                            if eter3.adres not in eters_al_toegewezen:
                                                 koker_nieuw, gevonden = vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter3, gang)
                                                 if not gevonden:
                                                     koker_nieuw = koker
-
                                                 koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3, gang)
-
-                                                koker_nieuw.add_eter(eter3.get_adres())
-                                                eter3.add_eter(koker_nieuw.get_adres())
-                                                eter1.add_eter(eter3.get_adres())
-                                                eter3.add_eter(eter1.get_adres())
-                                                eter2.add_eter(eter3.get_adres())
-                                                eter3.add_eter(eter2.get_adres())
-                                                eters_al_toegewezen.append(eter3.get_adres())
+                                                koker_niew, eter3 = registreer_gezien(koker_nieuw, eter3)
+                                                eter1, eter3 = registreer_gezien(eter1, eter3)
+                                                eter2, eter3 = registreer_gezien(eter2, eter3)
+                                                eters_al_toegewezen.append(eter3.adres)
                                                 aantal_eters_niet_ingedeeld -= 1
-                                                vlag_eter3 = True
-                                            if vlag_eter3:
+                                                eter3_toegewezen = True
+                                            if eter3_toegewezen:
                                                 break
-                            if vlag_eter2:
+                            if eter2_toegewezen:
                                 break
-            if vlag_eter1:
+            if eter1_toegewezen:
                 break
 
     if aantal_eters_niet_ingedeeld > 0:
