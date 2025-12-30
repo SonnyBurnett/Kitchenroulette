@@ -259,6 +259,9 @@ def main():
     teller = 0
     max_aantal_pogingen = 50
 
+
+# Note: maak een indeling hernoemen, naar: zet de lijsten in willekeurige volgorde
+
     while not indeling_gelukt and teller < max_aantal_pogingen:
         huizen = voorbereiding.maak_lijst_huizen_met_gang()
         lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
@@ -267,10 +270,17 @@ def main():
         #lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
         if gelukt_voorgerecht:
             lijst_kokers2, lijst_eters2 = maak_een_indeling("hoofdgerecht", lijst_na_voorgerecht)
-            lijst_na_hoofdgerecht, gelukt_hoofdgerecht = verdeel_eters_over_kokers("hoofdgerecht", lijst_eters2, lijst_kokers2)
+            #lijst_na_hoofdgerecht, gelukt_hoofdgerecht = verdeel_eters_over_kokers("hoofdgerecht", lijst_eters2, lijst_kokers2)
+            lijst_na_hoofdgerecht, gelukt_hoofdgerecht = verdeel_eters_voor_gang("hoofdgerecht", lijst_eters2, lijst_kokers2)
+
+
             if gelukt_hoofdgerecht:
                 lijst_kokers3, lijst_eters3 = maak_een_indeling("nagerecht", lijst_na_hoofdgerecht)
-                lijst_na_nagerecht, gelukt_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3, lijst_kokers3)
+                #lijst_na_nagerecht, gelukt_nagerecht = verdeel_eters_over_kokers("nagerecht", lijst_eters3, lijst_kokers3)
+                lijst_na_nagerecht, gelukt_nagerecht = verdeel_eters_voor_gang("nagerecht", lijst_eters3, lijst_kokers3)
+
+
+
                 schema_tabel, gelukt_hoofdgerecht = toon_output.print_eters(lijst_na_nagerecht)
         if gelukt_voorgerecht and gelukt_hoofdgerecht and gelukt_nagerecht:
             indeling_gelukt = True

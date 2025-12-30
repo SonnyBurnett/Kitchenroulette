@@ -19,7 +19,7 @@ def get_list_of_houses(deelnemers):
     huizen = []
     for deelnemer in deelnemers:
         nummer = 0
-        print("[MAIN]", deelnemer[1], deelnemer)
+        #print("[MAIN]", deelnemer[1], deelnemer)
         # for x in deelnemer:
         #     print("[TEST]", nummer, x)
         #     nummer += 1
