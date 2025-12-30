@@ -63,24 +63,24 @@ def assign_gang(aantallen, huizen):
     gelukt = True
 
     for huis in huizen:
-        if huis.get_adres() == "IJsselmeerdijk 9":
-            print("[WARN] dit is", huis.get_adres())
-            print("[WARN] aantal1",aantal1,"eerste groep",eerste_groep)
+        # if huis.get_adres() == "IJsselmeerdijk 9":
+        #     print("[WARN] dit is", huis.get_adres())
+        #     print("[WARN] aantal1",aantal1,"eerste groep",eerste_groep)
         if huis.get_voorkeur1() == "J" and aantal1 < eerste_groep:
             aantal1 += 1
             huis.set_gang("voorgerecht")
             huis.set_voorgerecht(huis.get_adres())
-            print("[INFO]", huis.get_adres(), "kookt het voorgerecht")
+            #print("[INFO]", huis.get_adres(), "kookt het voorgerecht")
         elif huis.get_voorkeur2() == "J" and aantal2 < tweede_groep:
             aantal2 += 1
             huis.set_gang("hoofdgerecht")
             huis.set_hoofdgerecht(huis.get_adres())
-            print("[INFO]", huis.get_adres(), "kookt het hoofdgerecht")
+            #print("[INFO]", huis.get_adres(), "kookt het hoofdgerecht")
         elif huis.get_voorkeur3() == "J" and aantal3 < derde_groep:
             aantal3 += 1
             huis.set_gang("nagerecht")
             huis.set_nagerecht(huis.get_adres())
-            print("[INFO]", huis.get_adres(), "kookt het nagerecht")
+            #print("[INFO]", huis.get_adres(), "kookt het nagerecht")
         else:
             print("[ERROR] major problem, stop everything and start over please!")
             gelukt = False

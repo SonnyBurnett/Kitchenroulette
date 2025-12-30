@@ -117,6 +117,9 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
         eter3_toegewezen = False
         eter2_toewijzen = True
         eter3_toewijzen = False
+        aantal_personen = koker.aantal_personen
+        #print("[CHECK] koker", koker.adres, "aantal_personen koker: ", aantal_personen)
+        aantal1 = aantal2 = aantal3 = 0
 
         if aantal_kokers_beschikbaar == aantal_eters_niet_ingedeeld:
             eter2_toewijzen = eter3_toewijzen = False
@@ -130,6 +133,8 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                     koker, eter1 = registreer_gezien(koker, eter1)
                     eters_al_toegewezen.append(eter1.adres)
                     aantal_eters_niet_ingedeeld, aantal_kokers_beschikbaar = aantal_eters_niet_ingedeeld - 1, aantal_kokers_beschikbaar - 1
+                    aantal_personen += eter1.aantal_personen
+                    aantal1 = eter1.aantal_personen
                     eter1_toegewezen = True
 
                     if eter2_toewijzen:
@@ -141,6 +146,8 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                     eter1, eter2 = registreer_gezien(eter1, eter2)
                                     eters_al_toegewezen.append(eter2.adres)
                                     aantal_eters_niet_ingedeeld -= 1
+                                    aantal_personen += eter2.aantal_personen
+                                    aantal2 = eter2.aantal_personen
                                     eter2_toegewezen = True
 
                                     if eter3_toewijzen:
@@ -149,12 +156,17 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                                 koker_nieuw, gevonden = vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter3, gang)
                                                 if not gevonden:
                                                     koker_nieuw = koker
+                                                else:
+                                                    print("[VALIDATE] nieuwe koker", koker_nieuw.adres, "aantal personen deze koker", koker_nieuw.aantal_personen)
+
                                                 koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3, gang)
-                                                koker_niew, eter3 = registreer_gezien(koker_nieuw, eter3)
+                                                koker_nieuw, eter3 = registreer_gezien(koker_nieuw, eter3)
                                                 eter1, eter3 = registreer_gezien(eter1, eter3)
                                                 eter2, eter3 = registreer_gezien(eter2, eter3)
                                                 eters_al_toegewezen.append(eter3.adres)
                                                 aantal_eters_niet_ingedeeld -= 1
+                                                aantal_personen += eter3.aantal_personen
+                                                aantal3 = eter3.aantal_personen
                                                 eter3_toegewezen = True
                                             if eter3_toegewezen:
                                                 break
@@ -162,6 +174,8 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                                 break
             if eter1_toegewezen:
                 break
+        print("[VALIDATE] koker", koker.adres, "aantal personen", aantal_personen, "eters: ", aantal1, aantal2, aantal3)
+
 
     if aantal_eters_niet_ingedeeld > 0:
         print("[ERROR] we hebben nog", aantal_eters_niet_ingedeeld, "eters over")

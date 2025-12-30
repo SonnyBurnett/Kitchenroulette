@@ -36,8 +36,8 @@ def print_eters(huizen):
         # print("Nagerecht:         ", huis.get_nagerecht(), "samen met", na_eters)
         # print("personen:          ", huis.get_aantal_personen())
         # print()
-        print("#",huis.get_naam(), "#", huis.get_adres(), "#",huis.get_gang(), "#",huis.get_voorgerecht(), "#",voor_eters,
-                             "#", huis.get_hoofdgerecht(), "#", hoofd_eters, "#", huis.get_nagerecht(), "#", na_eters, "#", huis.get_aantal_personen(),"#",huis.get_opmerkingen())
+        #print("#",huis.get_naam(), "#", huis.get_adres(), "#",huis.get_gang(), "#",huis.get_voorgerecht(), "#",voor_eters,
+        #                      "#", huis.get_hoofdgerecht(), "#", hoofd_eters, "#", huis.get_nagerecht(), "#", na_eters, "#", huis.get_aantal_personen(),"#",huis.get_opmerkingen())
         tabel_schema.append([huis.get_naam(), huis.get_adres(), huis.get_gang(), huis.get_voorgerecht(),voor_eters,
                              huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.get_aantal_personen()])
         teller += 1
