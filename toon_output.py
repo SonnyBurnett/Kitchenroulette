@@ -19,7 +19,7 @@ def print_eters(huizen):
     gelukt = True
     tabel_schema = []
     tabel_schema.append(["naam", "adres", "kookt gang", "eet voorgerecht bij", "eet voorgerecht met",
-                    "eet hoofdgerecht bij", "eet hoofdgerecht met", "eet nagerecht bij", "eet nagerecht met", "aantal personen"])
+                    "eet hoofdgerecht bij", "eet hoofdgerecht met", "eet nagerecht bij", "eet nagerecht met", "aantal huizen", "aantal eters"])
     for huis in huizen:
         voor_eters = wie_eet_nog_meer_mee("voorgerecht", huis, huizen )
         hoofd_eters = wie_eet_nog_meer_mee("hoofdgerecht", huis, huizen )
@@ -39,7 +39,7 @@ def print_eters(huizen):
         #print("#",huis.get_naam(), "#", huis.get_adres(), "#",huis.get_gang(), "#",huis.get_voorgerecht(), "#",voor_eters,
         #                      "#", huis.get_hoofdgerecht(), "#", hoofd_eters, "#", huis.get_nagerecht(), "#", na_eters, "#", huis.get_aantal_personen(),"#",huis.get_opmerkingen())
         tabel_schema.append([huis.get_naam(), huis.get_adres(), huis.get_gang(), huis.get_voorgerecht(),voor_eters,
-                             huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.get_aantal_personen()])
+                             huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.aantal_huizen, huis.aantal_eters])
         teller += 1
     return tabel_schema, gelukt
 
