@@ -118,7 +118,7 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
         eter2_toewijzen = True
         eter3_toewijzen = False
         aantal_personen = koker.aantal_personen
-        #print("[CHECK] koker", koker.adres, "aantal_personen koker: ", aantal_personen)
+        print("[CHECK] koker", koker.adres, "max_personen koker: ", koker.max_personen)
         aantal1 = aantal2 = aantal3 = 0
 
         if aantal_kokers_beschikbaar == aantal_eters_niet_ingedeeld:
@@ -141,33 +141,39 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
                         for eter2 in lijst_eters:
                             if eter2.adres not in eters_al_toegewezen:
                                 if eter2.adres not in koker.get_lijst_eters() and eter2.adres not in eter1.get_lijst_eters():
-                                    koker, eter2 = wijs_eter_aan_koker_toe(koker, eter2, gang)
-                                    koker, eter2 = registreer_gezien(koker, eter2)
-                                    eter1, eter2 = registreer_gezien(eter1, eter2)
-                                    eters_al_toegewezen.append(eter2.adres)
-                                    aantal_eters_niet_ingedeeld -= 1
-                                    aantal_personen += eter2.aantal_personen
-                                    aantal2 = eter2.aantal_personen
-                                    eter2_toegewezen = True
+                                    if not aantal_personen+eter2.aantal_personen > koker.max_personen:
+                                        koker, eter2 = wijs_eter_aan_koker_toe(koker, eter2, gang)
+                                        koker, eter2 = registreer_gezien(koker, eter2)
+                                        eter1, eter2 = registreer_gezien(eter1, eter2)
+                                        eters_al_toegewezen.append(eter2.adres)
+                                        aantal_eters_niet_ingedeeld -= 1
+                                        aantal_personen += eter2.aantal_personen
+                                        aantal2 = eter2.aantal_personen
+                                        eter2_toegewezen = True
 
                                     if eter3_toewijzen:
                                         for eter3 in lijst_eters:
                                             if eter3.adres not in eters_al_toegewezen:
-                                                koker_nieuw, gevonden = vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter3, gang)
-                                                if not gevonden:
-                                                    koker_nieuw = koker
-                                                else:
-                                                    print("[VALIDATE] nieuwe koker", koker_nieuw.adres, "aantal personen deze koker", koker_nieuw.aantal_personen)
+                                                if not aantal_personen + eter3.aantal_personen > koker.max_personen:
+                                                    koker_nieuw, gevonden = vind_een_koker_nieuw(lijst_kokers,
+                                                                                                 lijst_eters, eter3,
+                                                                                                 gang)
+                                                    if not gevonden:
+                                                        koker_nieuw = koker
+                                                    else:
+                                                        print("[VALIDATE] nieuwe koker", koker_nieuw.adres,
+                                                              "aantal personen deze koker", koker_nieuw.aantal_personen)
 
-                                                koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3, gang)
-                                                koker_nieuw, eter3 = registreer_gezien(koker_nieuw, eter3)
-                                                eter1, eter3 = registreer_gezien(eter1, eter3)
-                                                eter2, eter3 = registreer_gezien(eter2, eter3)
-                                                eters_al_toegewezen.append(eter3.adres)
-                                                aantal_eters_niet_ingedeeld -= 1
-                                                aantal_personen += eter3.aantal_personen
-                                                aantal3 = eter3.aantal_personen
-                                                eter3_toegewezen = True
+                                                    koker_nieuw, eter3 = wijs_eter_aan_koker_toe(koker_nieuw, eter3,
+                                                                                                 gang)
+                                                    koker_nieuw, eter3 = registreer_gezien(koker_nieuw, eter3)
+                                                    eter1, eter3 = registreer_gezien(eter1, eter3)
+                                                    eter2, eter3 = registreer_gezien(eter2, eter3)
+                                                    eters_al_toegewezen.append(eter3.adres)
+                                                    aantal_eters_niet_ingedeeld -= 1
+                                                    aantal_personen += eter3.aantal_personen
+                                                    aantal3 = eter3.aantal_personen
+                                                    eter3_toegewezen = True
                                             if eter3_toegewezen:
                                                 break
                             if eter2_toegewezen:
@@ -205,7 +211,7 @@ def main():
     gelukt_nagerecht = False
     indeling_gelukt = False
     teller = 0
-    max_aantal_pogingen = 15
+    max_aantal_pogingen = 50
 
     while not indeling_gelukt and teller < max_aantal_pogingen:
         huizen = voorbereiding.maak_lijst_huizen_met_gang()

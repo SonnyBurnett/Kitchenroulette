@@ -18,8 +18,14 @@ def get_vorige_keer(vorig_bestand):
 def get_list_of_houses(deelnemers):
     huizen = []
     for deelnemer in deelnemers:
+        nummer = 0
+        print("[MAIN]", deelnemer[1], deelnemer)
+        # for x in deelnemer:
+        #     print("[TEST]", nummer, x)
+        #     nummer += 1
+        #huizen.append(deelnemer[1]) ???????
         huizen.append(huis.huis(deelnemer[0], int(deelnemer[2]), "", deelnemer[1], "", "", "",
-                                0, [],deelnemer[3],deelnemer[4],deelnemer[5],deelnemer[6]))
+                                0, [],deelnemer[3],deelnemer[4],deelnemer[5],deelnemer[7],int(deelnemer[6])))
     print("[INFO]",len(huizen), "huizen in een lijst gezet.")
     return huizen
 

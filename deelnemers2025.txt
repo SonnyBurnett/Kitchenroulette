@@ -1,16 +1,16 @@
-IJsselmeerdijk 9,Joost en Jolanda,2,J,N,N,geen bijzonderheden
-Warder 190,Jos & Ida,2,J,J,J,Geen slakken en linzen.
-Warder 78,Jefta en Lieneke,4,J,J,J,Met 2 kids
-Warder 113,Andre en Ans,2,J,J,J,Geen bijzonderheden
-Warder 73,Pieter en Clara,4,J,N,J,Met 2 kids
-Warder 174A,Afra & Jules,2,J,J,J,Geen koriander, komkommer, tropische vruchten, spruitjes en witlof.
-Warder 189,Rene & Jennifer,2,N,J,N,Geen basilicum, pijnboompitten, garnalen, zeevruchten, wild.
-Warder 72,Taco & Hannie,2,J,J,J,Geen vis.
-Warder 110,Anita en Ron,2,N,J,N,Geen bijzonderheden.
-Warder 150,Justin & Freya,2,J,J,J,Geen scherp eten en geen bereide paprika (gekookt of gebakken).
-Warder 19,Tets & Jet,2,J,J,J,Geen bijzonderheden.
-Warder 186,Ruben en Rosa,4,J,J,J,met 2 kids
-Warder 117,Ben en Joke,2,N,N,J,geen bijzonderheden
-Badhuisweg 10, Anja & Harry,2,N,N,J,Geen bijzonderheden.
-Warder 36A,Mieke & Tanja,2,J,N,J,Geen bijzonderheden.
-Warder 14,Martin en Inge,2,J,N,J,Geen paprika
+IJsselmeerdijk 9,Joost en Jolanda,2,J,N,N,8,geen bijzonderheden
+Warder 190,Jos & Ida,2,J,J,J,8,Geen slakken en linzen
+Warder 78,Jefta en Lieneke,4,J,J,J,8,Met 2 kids
+Warder 113,Andre en Ans,2,J,J,J,8,Geen bijzonderheden
+Warder 73,Pieter en Clara,4,J,N,J,8,Met 2 kids
+Warder 174A,Afra & Jules,2,J,J,J,8,Geen koriander komkommer tropische vruchten spruitjes en witlof
+Warder 189,Rene & Jennifer,2,N,J,N,8,Geen basilicum pijnboompitten garnalen zeevruchten wild
+Warder 72,Taco & Hannie,2,J,J,J,8,Geen vis
+Warder 110,Anita en Ron,2,N,J,N,8,Geen bijzonderheden
+Warder 150,Justin & Freya,2,J,J,J,8,Geen scherp eten en geen bereide paprika gekookt of gebakken
+Warder 19,Tets & Jet,2,J,J,J,8,Geen bijzonderheden
+Warder 186,Ruben en Rosa,4,J,J,J,8,met 2 kids
+Warder 117,Ben en Joke,2,N,N,J,8,geen bijzonderheden
+Badhuisweg 10, Anja & Harry,2,N,N,J,8,Geen bijzonderheden
+Warder 36A,Mieke & Tanja,2,J,N,J,8,Geen bijzonderheden
+Warder 14,Martin en Inge,2,J,N,J,8,Geen paprika

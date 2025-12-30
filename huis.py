@@ -4,7 +4,7 @@
 #
 class huis:
   def __init__(self, adres, aantal_personen, gang, naam, voorgerecht, hoofdgerecht, nagerecht,
-               aantal_eters, lijst_eters, voorkeur1, voorkeur2, voorkeur3, opmerkingen):
+               aantal_eters, lijst_eters, voorkeur1, voorkeur2, voorkeur3, opmerkingen, max_personen):
     self.naam = naam
     self.adres = adres
     self.aantal_personen = aantal_personen
@@ -18,6 +18,7 @@ class huis:
     self.voorkeur2 = voorkeur2
     self.voorkeur3 = voorkeur3
     self.opmerkingen = opmerkingen
+    self.max_personen = max_personen
 
   def set_naam(self, naam):
       self.naam = naam
@@ -45,6 +46,9 @@ class huis:
 
   def set_lijst_eters(self, lijst_eters):
       self.lijst_eters = lijst_eters
+
+  def set_max_personen(self, max_personen):
+      self.max_personen = max_personen
 
   def add_eter(self, eter):
       self.lijst_eters.append(eter)
