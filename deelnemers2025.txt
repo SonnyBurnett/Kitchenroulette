@@ -11,6 +11,6 @@ Warder 150,Justin & Freya,2,J,J,J,8,Geen scherp eten en geen bereide paprika gek
 Warder 19,Tets & Jet,2,J,J,J,8,Geen bijzonderheden
 Warder 186,Ruben en Rosa,4,J,J,J,8,met 2 kids
 Warder 117,Ben en Joke,2,N,N,J,8,geen bijzonderheden
-Badhuisweg 10, Anja & Harry,2,N,N,J,8,Geen bijzonderheden
-Warder 36A,Mieke & Tanja,2,J,N,J,8,Geen bijzonderheden
-Warder 14,Martin en Inge,2,J,N,J,8,Geen paprika
+Badhuisweg 10, Anja & Harry,2,N,N,J,6,Geen bijzonderheden
+Warder 36A,Mieke & Tanja,2,J,N,J,6,Geen bijzonderheden
+Warder 14,Martin en Inge,2,J,N,J,6,Geen paprika

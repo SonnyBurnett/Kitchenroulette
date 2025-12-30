@@ -2,6 +2,8 @@ import voorbereiding
 import toon_output
 import random
 from datetime import datetime
+from operator import attrgetter
+
 
 
 #####################################################
@@ -59,6 +61,10 @@ def andere_eters_al_eerder_gezien(koker_adres, lijst_eters, gang, eter):
         return True
 
 
+def andere_eters_bij_koker(koker_adres, lijst_eters, gang):
+    lijst_eters_bij_koker = [eter for eter in lijst_eters if getattr(eter, gang) == koker_adres]
+    return lijst_eters_bij_koker
+
 #####################################################################################
 # Input:  Een huis (eter) die nog aan een koker moet worden toegewezen.
 #         De lijst met kokers, de lijst met eters en de gang die gekookt moet worden
@@ -82,12 +88,49 @@ def vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
     return geschikte_koker, gelukt
 
 
+def vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
+    geschikte_koker = ""
+    gelukt = True
+    lijst_kokers = sorted(lijst_kokers, key=attrgetter("aantal_huizen"))
+
+    for koker in lijst_kokers:
+        koker_adres = koker.adres
+        if not al_eerder_gezien(koker_adres, eter_toe_te_wijzen):
+            if not andere_eters_al_eerder_gezien(koker_adres, lijst_eters, gang, eter_toe_te_wijzen):
+                if not koker.aantal_huizen > 2:
+                    if not koker.aantal_personen + eter_toe_te_wijzen.aantal_personen > koker.max_personen:
+                        geschikte_koker = koker
+                        break
+    if geschikte_koker == "":
+        gelukt = False
+    return geschikte_koker, gelukt
+
 
 def registreer_gezien(huis1, huis2):
     huis1.add_eter(huis2.adres)
     huis2.add_eter(huis1.adres)
     return huis1, huis2
 
+
+def verdeel_eters_voor_gang(gang, lijst_eters, lijst_kokers):
+    te_verdelen_eters = []
+    for eters in lijst_eters:
+        te_verdelen_eters.append(eters)
+    while len(te_verdelen_eters) > 0:
+        eter_toe_te_wijzen = random.choice(te_verdelen_eters)
+        te_verdelen_eters.remove(eter_toe_te_wijzen)
+        koker, gevonden = vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang)
+        if gevonden:
+            koker.aantal_eters += eter_toe_te_wijzen.aantal_personen
+            koker.aantal_huizen += 1
+            koker, eter_toe_te_wijzen = wijs_eter_aan_koker_toe(koker, eter_toe_te_wijzen, gang)
+            koker, eter_toe_te_wijzen = registreer_gezien(koker, eter_toe_te_wijzen)
+            andere_eters = andere_eters_bij_koker(koker.adres, lijst_eters, gang)
+            for andere_eter in andere_eters:
+                eter_toe_te_wijzen, andere_eter = registreer_gezien(eter_toe_te_wijzen, andere_eter)
+        else:
+            return lijst_kokers + lijst_eters, False
+    return lijst_kokers + lijst_eters, True
 
 
 #####################################################################################
@@ -185,11 +228,14 @@ def verdeel_eters_over_kokers(gang, lijst_eters, lijst_kokers):
 
     if aantal_eters_niet_ingedeeld > 0:
         print("[ERROR] we hebben nog", aantal_eters_niet_ingedeeld, "eters over")
-        for losers in lijst_eters:
-            if losers.get_adres() not in eters_al_toegewezen:
-                print("[ERROR] we hebben nog", losers.get_adres())
+        for loser in lijst_eters:
+            if loser.get_adres() not in eters_al_toegewezen:
+                print("[ERROR] we hebben nog", loser.get_adres())
+                #koker_nieuw, gevonden = vind_een_koker_nieuw(lijst_kokers, lijst_eters, loser, gang)
+                #print("[NIEUWE POGING]", koker_nieuw.adres, gevonden)
         alles_toegewezen = False
         return originele_lijst, alles_toegewezen
+
     if aantal_kokers_beschikbaar > 0:
         print("[ERROR] we hebben nog kokers beschikbaar", aantal_kokers_beschikbaar)
         alles_toegewezen = False
@@ -216,7 +262,9 @@ def main():
     while not indeling_gelukt and teller < max_aantal_pogingen:
         huizen = voorbereiding.maak_lijst_huizen_met_gang()
         lijst_kokers, lijst_eters = maak_een_indeling("voorgerecht", huizen)
-        lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
+        lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_voor_gang("voorgerecht", lijst_eters, lijst_kokers)
+
+        #lijst_na_voorgerecht, gelukt_voorgerecht = verdeel_eters_over_kokers("voorgerecht", lijst_eters, lijst_kokers)
         if gelukt_voorgerecht:
             lijst_kokers2, lijst_eters2 = maak_een_indeling("hoofdgerecht", lijst_na_voorgerecht)
             lijst_na_hoofdgerecht, gelukt_hoofdgerecht = verdeel_eters_over_kokers("hoofdgerecht", lijst_eters2, lijst_kokers2)
