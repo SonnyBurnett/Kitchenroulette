@@ -3,6 +3,7 @@ import toon_output
 import random
 from datetime import datetime
 from operator import attrgetter
+import pandas as pd
 
 
 
@@ -289,8 +290,11 @@ def main():
             print("[ERROR] Indeling niet gelukt. Start nieuwe poging.")
         teller += 1
 
+
         df = voorbereiding.open_excel("roulette2025.xlsx")
-        print(df)
+        print(type(df))
+        voorbereiding.tel_voorkeuren(df)
+        huizen = voorbereiding.zet_pandas_in_objecten(df)
 
 
 

@@ -6,11 +6,12 @@ import pandas as pd
 
 def open_excel(filename):
     df = pd.read_excel(filename, sheet_name="Blad1")
-    aantal_deelnemers = df["aantal personen"].sum()
+    aantal_deelnemers = df.aantalpersonen.sum()
     aantal_huizen = len(df)
     print("[INFO]", aantal_deelnemers, "deelnemers uit file", filename, "gelezen")
     print("[INFO]", aantal_huizen, "huizen doen mee")
-    return df, aantal_huizen, aantal_deelnemers
+    print(type(df))
+    return df
 
 
 def get_deelnemers(input_bestand):
@@ -20,6 +21,39 @@ def get_deelnemers(input_bestand):
     print("[INFO]",aantal_deelnemers, "deelnemers uit file", input_bestand ,"gelezen")
     print("[INFO]",aantal_huizen, "huizen doen mee")
     return deelnemers, aantal_huizen, aantal_deelnemers
+
+
+def tel_voorkeuren(df):
+    aantal_voor = (df.voorgerecht == "J").sum()
+    aantal_hoofd = (df.hoofdgerecht == "J").sum()
+    aantal_na = (df.nagerecht == "J").sum()
+    print(aantal_voor, aantal_hoofd, aantal_na)
+
+
+def zet_pandas_in_objecten(df):
+    huizen = []
+    for row in df.itertuples(index=True):
+        aantal_eters = 0
+        aantal_huizen = 0
+        gang = voorgerecht = hoofdgerecht = nagerecht = ""
+        lijst_eters = []
+        huizen.append(huis.huis(row.adres,
+                                row.aantalpersonen,
+                                gang,
+                                row.naam,
+                                voorgerecht,
+                                hoofdgerecht,
+                                nagerecht,
+                                aantal_eters,
+                                lijst_eters,
+                                row.voorgerecht,
+                                row.hoofdgerecht,
+                                row.nagerecht,
+                                row.dieetwensen,
+                                row.maxaantaleters,
+                                aantal_huizen))
+    print("[INFO]", len(huizen), "huizen in een lijst gezet.")
+    return huizen
 
 
 def get_vorige_keer(vorig_bestand):
