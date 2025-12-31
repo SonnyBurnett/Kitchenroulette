@@ -100,16 +100,11 @@ def check_vorige_keer(lijst_huizen, lijst_vorige):
                         print("[ERROR] koker",dit_adres,"heeft vorige keer ook voor eter",e," gekookt")
 
 
-def afronden(start_time, lijst_na_nagerecht, schema_tabel):
+def afronden(lijst_na_nagerecht):
+    schema_tabel, gelukt_hoofdgerecht = print_eters(lijst_na_nagerecht)
     vorig_bestand = "deel.txt"
     vorige_keer = voorbereiding.get_vorige_keer(vorig_bestand)
-
-    end_time = datetime.now()
-    time_difference = (end_time - start_time).total_seconds()
-    print("Ik deed er: ", time_difference, "seconden over")
-
     check_vorige_keer(lijst_na_nagerecht, vorige_keer)
-
     print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
     with open('kitchenroulette_schema.txt', 'w') as f:
         f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))

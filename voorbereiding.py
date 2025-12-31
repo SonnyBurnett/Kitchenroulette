@@ -10,7 +10,6 @@ def open_excel(filename):
     aantal_huizen = len(df)
     print("[INFO]", aantal_deelnemers, "deelnemers uit file", filename, "gelezen")
     print("[INFO]", aantal_huizen, "huizen doen mee")
-    print(type(df))
     return df
 
 
@@ -27,10 +26,10 @@ def tel_voorkeuren(df):
     aantal_voor = (df.voorgerecht == "J").sum()
     aantal_hoofd = (df.hoofdgerecht == "J").sum()
     aantal_na = (df.nagerecht == "J").sum()
-    print(aantal_voor, aantal_hoofd, aantal_na)
+    print("[INFO] voorkeur voorgerecht:",aantal_voor, "voorkeur hoofdgerecht:", aantal_hoofd, "voorkeur nagerecht:", aantal_na)
 
 
-def zet_pandas_in_objecten(df):
+def lees_alle_huizen(df):
     huizen = []
     for row in df.itertuples(index=True):
         aantal_eters = 0
@@ -148,6 +147,17 @@ def assign_gang(aantallen, huizen):
     #     huizen[c].set_nagerecht(huizen[c].get_adres())
     print("[INFO] aantal voorgerecht",aantal1, "aantal hoofdgerecht", aantal2, "aantal nagerecht", aantal3)
     print("[INFO] Ieder huis heeft een gang om te koken toegewezen gekregen")
+    return huizen
+
+
+def maak_lijst_huizen_met_gang_nieuw():
+    input_bestand = "roulette2025.xlsx"
+    df = open_excel(input_bestand)
+    tel_voorkeuren(df)
+    aantal_huizen = len(df)
+    huizen = lees_alle_huizen(df)
+    aantallen = verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen)
+    huizen = assign_gang(aantallen, huizen)
     return huizen
 
 
