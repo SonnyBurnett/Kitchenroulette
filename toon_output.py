@@ -2,6 +2,8 @@
 from tabulate import tabulate
 from datetime import datetime
 import voorbereiding
+from operator import attrgetter
+
 
 
 def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
@@ -17,6 +19,7 @@ def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
 def print_eters(huizen):
     teller = 1
     gelukt = True
+    huizen = sorted(huizen, key=attrgetter("gang"))
     tabel_schema = []
     tabel_schema.append(["naam", "adres", "kookt gang", "eet voorgerecht bij", "eet voorgerecht met",
                     "eet hoofdgerecht bij", "eet hoofdgerecht met", "eet nagerecht bij", "eet nagerecht met", "aantal huizen", "aantal eters"])

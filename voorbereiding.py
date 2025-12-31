@@ -1,5 +1,17 @@
 import huis
 import csv
+import pandas as pd
+
+
+
+def open_excel(filename):
+    df = pd.read_excel(filename, sheet_name="Blad1")
+    aantal_deelnemers = df["aantal personen"].sum()
+    aantal_huizen = len(df)
+    print("[INFO]", aantal_deelnemers, "deelnemers uit file", filename, "gelezen")
+    print("[INFO]", aantal_huizen, "huizen doen mee")
+    return df, aantal_huizen, aantal_deelnemers
+
 
 def get_deelnemers(input_bestand):
     deelnemers = list(csv.reader(open(input_bestand)))

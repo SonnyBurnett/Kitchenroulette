@@ -289,6 +289,9 @@ def main():
             print("[ERROR] Indeling niet gelukt. Start nieuwe poging.")
         teller += 1
 
+        df = voorbereiding.open_excel("roulette2025.xlsx")
+        print(df)
+
 
 
 if __name__ == '__main__':
