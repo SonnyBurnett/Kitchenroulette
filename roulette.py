@@ -73,7 +73,6 @@ def andere_eters_bij_koker(koker_adres, lijst_eters, gang):
 #
 
 
-
 def vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
     geschikte_koker = ""
     gelukt = True
@@ -121,8 +120,6 @@ def verdeel_eters_voor_gang(gang, huizen):
     return lijst_kokers + lijst_eters, True
 
 
-
-
 #################################################
 
 def main():
@@ -141,6 +138,7 @@ def main():
         if gelukt_voorgerecht and gelukt_hoofdgerecht and gelukt_nagerecht:
             indeling_gelukt = True
             toon_output.afronden(lijst_na_nagerecht)
+            toon_output.maak_excel(lijst_na_nagerecht)
         else:
             print("[ERROR] Indeling niet gelukt. Start nieuwe poging.")
         teller += 1

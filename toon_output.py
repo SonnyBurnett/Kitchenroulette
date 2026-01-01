@@ -4,6 +4,8 @@ from datetime import datetime
 import voorbereiding
 from operator import attrgetter
 
+import pandas as pd
+
 
 
 def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
@@ -19,7 +21,13 @@ def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
 def print_eters(huizen):
     teller = 1
     gelukt = True
-    huizen = sorted(huizen, key=attrgetter("gang"))
+    volgorde = {
+        "voorgerecht": 0,
+        "hoofdgerecht": 1,
+        "nagerecht": 2
+    }
+    huizen = sorted(huizen, key=lambda h: volgorde[h.gang])
+    #huizen = sorted(huizen, key=attrgetter("gang"))
     tabel_schema = []
     tabel_schema.append(["naam", "adres", "kookt gang", "eet voorgerecht bij", "eet voorgerecht met",
                     "eet hoofdgerecht bij", "eet hoofdgerecht met", "eet nagerecht bij", "eet nagerecht met", "aantal huizen", "aantal eters"])
@@ -29,18 +37,6 @@ def print_eters(huizen):
         na_eters = wie_eet_nog_meer_mee("nagerecht", huis, huizen )
         if len(hoofd_eters) > 3 :
             gelukt = False
-            #print("[ERREUR]", hoofd_eters)
-        # print("nummer:            ", teller)
-        # print("naam:             ", huis.get_naam())
-        # print("adres:             ", huis.get_adres())
-        # print("Je kookt het:      ", huis.get_gang())
-        # print("Voorgerecht:       ", huis.get_voorgerecht(), "samen met", voor_eters)
-        # print("Hoofdgerecht:      ", huis.get_hoofdgerecht(), "samen met", hoofd_eters)
-        # print("Nagerecht:         ", huis.get_nagerecht(), "samen met", na_eters)
-        # print("personen:          ", huis.get_aantal_personen())
-        # print()
-        #print("#",huis.get_naam(), "#", huis.get_adres(), "#",huis.get_gang(), "#",huis.get_voorgerecht(), "#",voor_eters,
-        #                      "#", huis.get_hoofdgerecht(), "#", hoofd_eters, "#", huis.get_nagerecht(), "#", na_eters, "#", huis.get_aantal_personen(),"#",huis.get_opmerkingen())
         tabel_schema.append([huis.get_naam(), huis.get_adres(), huis.get_gang(), huis.get_voorgerecht(),voor_eters,
                              huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.aantal_huizen, huis.aantal_eters])
         teller += 1
@@ -108,3 +104,59 @@ def afronden(lijst_na_nagerecht):
     print(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
     with open('kitchenroulette_schema.txt', 'w') as f:
         f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
+
+
+def maak_excel(huizen):
+    df = vul_df(huizen)
+    df.to_excel("output.xlsx", index=False)
+    print("[INFO] excel gemaakt")
+
+
+def maak_df():
+    df = pd.DataFrame({
+        "naam": pd.Series(dtype="string"),
+        "adres": pd.Series(dtype="string"),
+        "kookt_gang": pd.Series(dtype="string"),
+        "eet voorgerecht bij": pd.Series(dtype="string"),
+        "eet voorgerecht met": pd.Series(dtype="string"),
+        "eet hoofdgerecht bij": pd.Series(dtype="string"),
+        "eet hoofdgerecht met": pd.Series(dtype="string"),
+        "eet nagerecht bij": pd.Series(dtype="string"),
+        "eet nagerecht met": pd.Series(dtype="string"),
+        "aantal huizen": pd.Series(dtype="int"),
+        "aantal eters": pd.Series(dtype="int"),
+        "max eters": pd.Series(dtype="int"),
+    })
+    return df
+
+
+def vul_df(huizen):
+
+    volgorde = {
+        "voorgerecht": 0,
+        "hoofdgerecht": 1,
+        "nagerecht": 2
+    }
+    huizen = sorted(huizen, key=lambda h: volgorde[h.gang])
+    #huizen = sorted(huizen, key=attrgetter("gang"))
+
+    df = maak_df()
+    for huis in huizen:
+        voor_eters = wie_eet_nog_meer_mee("voorgerecht", huis, huizen)
+        hoofd_eters = wie_eet_nog_meer_mee("hoofdgerecht", huis, huizen)
+        na_eters = wie_eet_nog_meer_mee("nagerecht", huis, huizen)
+        df.loc[len(df)] = {
+            "naam": huis.naam,
+            "adres": huis.adres,
+            "kookt_gang": huis.gang,
+            "eet voorgerecht bij": huis.voorgerecht,
+            "eet voorgerecht met": voor_eters,
+            "eet hoofdgerecht bij": huis.hoofdgerecht,
+            "eet hoofdgerecht met": hoofd_eters,
+            "eet nagerecht bij": huis.nagerecht,
+            "eet nagerecht met": na_eters,
+            "aantal huizen": huis.aantal_huizen,
+            "aantal eters": huis.aantal_eters,
+            "max eters": huis.max_personen,
+        }
+    return df
