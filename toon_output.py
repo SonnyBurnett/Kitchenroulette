@@ -1,21 +1,9 @@
 
 from tabulate import tabulate
-from datetime import datetime
 import voorbereiding
 from operator import attrgetter
-
 import pandas as pd
 
-
-
-def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
-    print("Dit zijn de kokers voor gang", gang)
-    for k in lijst_kokers:
-        print(k.get_adres())
-    print("Dit zijn de eters voor gang", gang)
-    for e in lijst_eters:
-        print(e.get_adres())
-    print("aantal kokers:", len(lijst_kokers), "aantal eters:", len(lijst_eters))
 
 
 def print_eters(huizen):
@@ -126,6 +114,8 @@ def maak_df():
         "aantal huizen": pd.Series(dtype="int"),
         "aantal eters": pd.Series(dtype="int"),
         "max eters": pd.Series(dtype="int"),
+        "kids": pd.Series(dtype="string"),
+        "kids mee": pd.Series(dtype="string"),
     })
     return df
 
@@ -158,5 +148,7 @@ def vul_df(huizen):
             "aantal huizen": huis.aantal_huizen,
             "aantal eters": huis.aantal_eters,
             "max eters": huis.max_personen,
+            "kids": huis.kids,
+            "kids mee": huis.kids_mee,
         }
     return df

@@ -210,3 +210,61 @@ def vind_een_koker_nieuw(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
     if geschikte_koker == "":
         gelukt = False
     return geschikte_koker, gelukt
+
+
+
+def tel_voorkeur(huizen):
+    aantal_voor = 0
+    aantal_hoofd = 0
+    aantal_na = 0
+    for huis in huizen:
+        if huis.get_voorkeur1() == "J":
+            aantal_voor += 1
+        if huis.get_voorkeur2() == "J":
+            aantal_hoofd += 1
+        if huis.get_voorkeur3() == "J":
+            aantal_na += 1
+    print("[INFO] voorkeur voor voorgerecht", aantal_voor,"voorkeur voor hoofdgerecht", aantal_hoofd,"voorkeur voor nagerecht", aantal_na)
+    return aantal_voor, aantal_hoofd, aantal_na
+
+
+def get_deelnemers(input_bestand):
+    deelnemers = list(csv.reader(open(input_bestand)))
+    aantal_deelnemers = sum([int(x[2]) for x in deelnemers])
+    aantal_huizen = len(deelnemers)
+    print("[INFO]",aantal_deelnemers, "deelnemers uit file", input_bestand ,"gelezen")
+    print("[INFO]",aantal_huizen, "huizen doen mee")
+    return deelnemers, aantal_huizen, aantal_deelnemers
+
+def get_list_of_houses(deelnemers):
+    huizen = []
+    for deelnemer in deelnemers:
+        nummer = 0
+        #print("[MAIN]", deelnemer[1], deelnemer)
+        # for x in deelnemer:
+        #     print("[TEST]", nummer, x)
+        #     nummer += 1
+        #huizen.append(deelnemer[1]) ???????
+        huizen.append(huis.huis(deelnemer[0], int(deelnemer[2]), "", deelnemer[1], "", "", "",
+                                0, [],deelnemer[3],deelnemer[4],deelnemer[5],deelnemer[7],int(deelnemer[6]),0))
+    print("[INFO]",len(huizen), "huizen in een lijst gezet.")
+    return huizen
+
+def maak_lijst_huizen_met_gang():
+    input_bestand = "deelnemers2025.txt"
+    deelnemers, aantal_huizen, aantal_deelnemers = get_deelnemers(input_bestand)
+    aantallen = verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen)
+    huizen = get_list_of_houses(deelnemers)
+    huizen = assign_gang(aantallen, huizen)
+    tel_voorkeur(huizen)
+    return huizen
+
+
+def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
+    print("Dit zijn de kokers voor gang", gang)
+    for k in lijst_kokers:
+        print(k.get_adres())
+    print("Dit zijn de eters voor gang", gang)
+    for e in lijst_eters:
+        print(e.get_adres())
+    print("aantal kokers:", len(lijst_kokers), "aantal eters:", len(lijst_eters))

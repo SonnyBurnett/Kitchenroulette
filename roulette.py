@@ -84,8 +84,9 @@ def vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
             if not andere_eters_al_eerder_gezien(koker_adres, lijst_eters, gang, eter_toe_te_wijzen):
                 if not koker.aantal_huizen > 2:
                     if not koker.aantal_personen + eter_toe_te_wijzen.aantal_personen > koker.max_personen:
-                        geschikte_koker = koker
-                        break
+                        if not (koker.kids == 'N' and eter_toe_te_wijzen.kids_mee == "J"):
+                            geschikte_koker = koker
+                            break
     if geschikte_koker == "":
         gelukt = False
     return geschikte_koker, gelukt
