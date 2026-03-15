@@ -1,14 +1,36 @@
 import huis
 import csv
 import pandas as pd
+import tkinter as tk
+from tkinter import filedialog
 
 
-def open_excel(filename):
+def vraag_excel_naam():
+    root = tk.Tk()
+    root.withdraw()  # geen leeg venster tonen
+
+    bestand = filedialog.askopenfilename(
+        title="Kies een Excel-bestand",
+        filetypes=[("Excel bestanden", "*.xlsx *.xls")]
+    )
+
+    if not bestand:
+        print("Geen bestand gekozen")
+        return "roulette2025.xlxs"
+    else:
+        print("Gekozen bestand:", bestand)
+        return bestand
+
+
+def open_excel():
+    #filename = vraag_excel_naam()
+    filename= "roulette2025.xlsx"
     df = pd.read_excel(filename, sheet_name="Blad1")
     aantal_deelnemers = df.aantalpersonen.sum()
     aantal_huizen = len(df)
     print("[INFO]", aantal_deelnemers, "deelnemers uit file", filename, "gelezen")
     print("[INFO]", aantal_huizen, "huizen doen mee")
+    #print(df)
     return df
 
 
@@ -35,14 +57,29 @@ def lees_alle_huizen(df):
                                 nagerecht,
                                 aantal_eters,
                                 lijst_eters,
-                                row.voorgerecht,
-                                row.hoofdgerecht,
-                                row.nagerecht,
+                                row.voorgerecht.upper(),
+                                row.hoofdgerecht.upper(),
+                                row.nagerecht.upper(),
                                 row.dieetwensen,
                                 row.maxaantaleters,
                                 aantal_huizen,
-                                row.kids,
-                                row.kids_mee,))
+                                row.kids.upper(),
+                                row.kids_mee.upper(),
+                                ))
+        print(row.adres,row.aantalpersonen,gang, row.naam,
+                                voorgerecht,
+                                hoofdgerecht,
+                                nagerecht,
+                                aantal_eters,
+                                lijst_eters,
+                                row.voorgerecht.upper(),
+                                row.hoofdgerecht.upper(),
+                                row.nagerecht.upper(),
+                                row.dieetwensen,
+                                row.maxaantaleters,
+                                aantal_huizen,
+                                row.kids.upper(),
+                                row.kids_mee.upper())
     print("[INFO]", len(huizen), "huizen in een lijst gezet.")
     return huizen
 
@@ -63,7 +100,8 @@ def verdeel_in_zo_gelijk_mogelijke_groepen(aantal_huizen):
         aantal_voorgerecht += 1
         aantal_nagerecht+=1
     print("[INFO] de lijst verdeeld in ", aantal_voorgerecht, "voorgerechten", aantal_hoofdgerecht, "hoofdgerechten", aantal_nagerecht, "nagerechten")
-    return [aantal_voorgerecht, aantal_hoofdgerecht, aantal_nagerecht]
+    return [5,4,4]
+    #return [aantal_voorgerecht, aantal_hoofdgerecht, aantal_nagerecht]
 
 
 def assign_gang(aantallen, huizen):
@@ -74,23 +112,74 @@ def assign_gang(aantallen, huizen):
     aantal2 = 0
     aantal3 = 0
     gelukt = True
+    print("aantallen", aantallen)
+    print("eerste_groep", eerste_groep)
+    print("tweede_groep", tweede_groep)
+    print("derde_groep", derde_groep)
+    print("eerste groep", eerste_groep, "tweede groep", tweede_groep, "derde groep", derde_groep)
 
     for huis in huizen:
-        if huis.get_voorkeur1() == "J" and aantal1 < eerste_groep:
+        print("[ASSIGN]", huis.adres,huis.voorkeur1,huis.voorkeur2,huis.voorkeur3)
+        print(aantal1, aantal2, aantal3)
+        voorkeur = huis.voorkeur1+huis.voorkeur2+huis.voorkeur3
+        if voorkeur == "JNN" and aantal1 < eerste_groep:
             aantal1 += 1
             huis.set_gang("voorgerecht")
             huis.set_voorgerecht(huis.get_adres())
-        elif huis.get_voorkeur2() == "J" and aantal2 < tweede_groep:
+        elif voorkeur == "NJN" and aantal2 < tweede_groep:
             aantal2 += 1
             huis.set_gang("hoofdgerecht")
             huis.set_hoofdgerecht(huis.get_adres())
-        elif huis.get_voorkeur3() == "J" and aantal3 < derde_groep:
+        elif voorkeur == "NNJ" and aantal3 < derde_groep:
             aantal3 += 1
             huis.set_gang("nagerecht")
             huis.set_nagerecht(huis.get_adres())
-        else:
-            print("[ERROR] major problem, stop everything and start over please!")
-            gelukt = False
+
+    for huis in huizen:
+        print("[ASSIGN]", huis.adres,huis.voorkeur1,huis.voorkeur2,huis.voorkeur3)
+        print(aantal1, aantal2, aantal3)
+        voorkeur = huis.voorkeur1+huis.voorkeur2+huis.voorkeur3
+        if voorkeur == "JJN" and aantal1 < eerste_groep:
+            aantal1 += 1
+            huis.set_gang("voorgerecht")
+            huis.set_voorgerecht(huis.get_adres())
+        elif voorkeur == "JJN" and aantal2 < tweede_groep:
+            aantal2 += 1
+            huis.set_gang("hoofdgerecht")
+            huis.set_voorgerecht(huis.get_adres())
+        elif voorkeur == "NJJ" and aantal2 < tweede_groep:
+            aantal2 += 1
+            huis.set_gang("hoofdgerecht")
+            huis.set_hoofdgerecht(huis.get_adres())
+        elif voorkeur == "NJJ" and aantal3 < derde_groep:
+            aantal3 += 1
+            huis.set_gang("nagerecht")
+            huis.set_nagerecht(huis.get_adres())
+        elif voorkeur == "JNJ" and aantal3 < derde_groep:
+            aantal3 += 1
+            huis.set_gang("nagerecht")
+            huis.set_nagerecht(huis.get_adres())
+        elif voorkeur == "JNJ" and aantal1 < eerste_groep:
+            aantal1 += 1
+            huis.set_gang("voorgerecht")
+            huis.set_voorgerecht(huis.get_adres())
+
+    for huis in huizen:
+        print("[ASSIGN]", huis.adres, huis.voorkeur1, huis.voorkeur2, huis.voorkeur3)
+        print(aantal1, aantal2, aantal3)
+        voorkeur = huis.voorkeur1 + huis.voorkeur2 + huis.voorkeur3
+        if voorkeur == "JJJ" and aantal1 < eerste_groep:
+            aantal1 += 1
+            huis.set_gang("voorgerecht")
+            huis.set_voorgerecht(huis.get_adres())
+        elif voorkeur == "JJJ" and aantal2 < tweede_groep:
+            aantal2 += 1
+            huis.set_gang("hoofdgerecht")
+            huis.set_hoofdgerecht(huis.get_adres())
+        elif voorkeur == "JJJ" and aantal3 < derde_groep:
+            aantal3 += 1
+            huis.set_gang("nagerecht")
+            huis.set_nagerecht(huis.get_adres())
 
     print("[INFO] aantal voorgerecht",aantal1, "aantal hoofdgerecht", aantal2, "aantal nagerecht", aantal3)
     print("[INFO] Ieder huis heeft een gang om te koken toegewezen gekregen")
@@ -98,8 +187,8 @@ def assign_gang(aantallen, huizen):
 
 
 def maak_lijst_huizen_met_gang_nieuw():
-    input_bestand = "roulette2025.xlsx"
-    df = open_excel(input_bestand)
+    #input_bestand = "roulette2025.xlsx"
+    df = open_excel()
     tel_voorkeuren(df)
     aantal_huizen = len(df)
     huizen = lees_alle_huizen(df)

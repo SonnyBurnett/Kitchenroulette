@@ -268,3 +268,20 @@ def print_eters_en_kokers(lijst_kokers, lijst_eters, gang):
     for e in lijst_eters:
         print(e.get_adres())
     print("aantal kokers:", len(lijst_kokers), "aantal eters:", len(lijst_eters))
+
+    elif huis.get_voorkeur1() == "J" and aantal1 < eerste_groep:
+    aantal1 += 1
+    huis.set_gang("voorgerecht")
+    huis.set_voorgerecht(huis.get_adres())
+
+elif huis.get_voorkeur2() == "J" and aantal2 < tweede_groep:
+aantal2 += 1
+huis.set_gang("hoofdgerecht")
+huis.set_hoofdgerecht(huis.get_adres())
+elif huis.get_voorkeur3() == "J" and aantal3 < derde_groep:
+aantal3 += 1
+huis.set_gang("nagerecht")
+huis.set_nagerecht(huis.get_adres())
+else:
+print("[ERROR] major problem, stop everything and start over please!")
+gelukt = False

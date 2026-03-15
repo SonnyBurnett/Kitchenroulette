@@ -5,6 +5,24 @@ from operator import attrgetter
 import pandas as pd
 
 
+def vind_dieetwensen(adres, huizen):
+    # Klopt geen hout van! Neemt volgens mij het voorgerecht als het hoof- of nagerecht moet zijn.
+    house = next((h for h in huizen if h.adres == adres), None)
+    if house:
+        return(house.opmerkingen)  # Jan de Vries
+    else:
+        print("Niet gevonden")
+    return "niks"
+
+
+def vind_naam(adres, huizen):
+    house = next((h for h in huizen if h.adres == adres), None)
+    if house:
+        return(house.naam)  # Jan de Vries
+    else:
+        print("Niet gevonden")
+    return "niks"
+
 
 def print_eters(huizen):
     teller = 1
@@ -27,6 +45,25 @@ def print_eters(huizen):
             gelukt = False
         tabel_schema.append([huis.get_naam(), huis.get_adres(), huis.get_gang(), huis.get_voorgerecht(),voor_eters,
                              huis.get_hoofdgerecht(), hoofd_eters, huis.get_nagerecht(), na_eters, huis.aantal_huizen, huis.aantal_eters])
+        print("Beste", huis.naam, huis.adres)
+        print("Jullie zijn geselecteerd voor het maken van het", huis.gang)
+        print("Jullie ontvangen", huis.aantal_eters, "personen")
+        if huis.gang == "voorgerecht":
+            #print("Jullie ontvangen", voor_eters)
+            for eter in voor_eters:
+                print("Opmerkingen", vind_dieetwensen(eter, huizen))
+        if huis.gang == "hoofdgerecht":
+            #print("Jullie ontvangen", hoofd_eters)
+            for eter in voor_eters:
+                print("Opmerkingen", vind_dieetwensen(eter, huizen))
+        if huis.gang == "nagerecht":
+            #print("Jullie ontvangen", na_eters)
+            for eter in voor_eters:
+                print("Opmerkingen", vind_dieetwensen(eter, huizen))
+        print("Voor het voorgerecht worden jullie om 17.00 uur verwacht op", huis.voorgerecht)
+        print("Voor het hoofdgerecht worden jullie om 18.30 uur verwacht op", huis.hoofdgerecht)
+        print("Voor het dessert worden jullie om 20.00 uur verwacht op", huis.nagerecht)
+        print()
         teller += 1
     return tabel_schema, gelukt
 
@@ -93,6 +130,18 @@ def afronden(lijst_na_nagerecht):
     with open('kitchenroulette_schema.txt', 'w') as f:
         f.write(tabulate(schema_tabel, headers="firstrow", tablefmt="grid"))
 
+def maak_email(lijst_na_nagerecht):
+    for huis in lijst_na_nagerecht:
+        print("Beste", huis.naam, huis.adres)
+        print("Jullie zijn geselecteerd voor het maken van het", huis.gang)
+        print("Jullie ontvangen", huis.aantal_eters, "personen")
+        for eter in huis.lijst_eters:
+            print("Dieetwensen en bijzonderheden", eter)
+        print("Voor het voorgerecht worden jullie om 17.00 uur verwacht op", huis.voorgerecht)
+        print("Voor het hoofdgerecht worden jullie om 18.30 uur verwacht op", huis.hoofdgerecht)
+        print("Voor het dessert worden jullie om 20.00 uur verwacht op", huis.nagerecht)
+        print()
+
 
 def maak_excel(huizen):
     df = vul_df(huizen)
@@ -114,8 +163,9 @@ def maak_df():
         "aantal huizen": pd.Series(dtype="int"),
         "aantal eters": pd.Series(dtype="int"),
         "max eters": pd.Series(dtype="int"),
-        "kids": pd.Series(dtype="string"),
+        "kids welkom": pd.Series(dtype="string"),
         "kids mee": pd.Series(dtype="string"),
+        "aantal personen huis": pd.Series(dtype="int"),
     })
     return df
 
@@ -148,7 +198,8 @@ def vul_df(huizen):
             "aantal huizen": huis.aantal_huizen,
             "aantal eters": huis.aantal_eters,
             "max eters": huis.max_personen,
-            "kids": huis.kids,
+            "kids welkom": huis.kids,
             "kids mee": huis.kids_mee,
+            "aantal personen huis": huis.aantal_personen,
         }
     return df

@@ -76,20 +76,32 @@ def andere_eters_bij_koker(koker_adres, lijst_eters, gang):
 def vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang):
     geschikte_koker = ""
     gelukt = True
-    lijst_kokers = sorted(lijst_kokers, key=attrgetter("aantal_huizen"))
 
+
+    if eter_toe_te_wijzen == "Warder 187":
+        for kok in lijst_kokers:
+            if kok.adres == "IJsselmeerdijk 8":
+                geschikte_koker = kok
+                return geschikte_koker, gelukt, lijst_kokers
+
+
+    lijst_kokers = sorted(lijst_kokers, key=attrgetter("aantal_huizen"))
+    #print("[START]")
     for koker in lijst_kokers:
         koker_adres = koker.adres
+
         if not al_eerder_gezien(koker_adres, eter_toe_te_wijzen):
             if not andere_eters_al_eerder_gezien(koker_adres, lijst_eters, gang, eter_toe_te_wijzen):
                 if not koker.aantal_huizen > 2:
-                    if not koker.aantal_personen + eter_toe_te_wijzen.aantal_personen > koker.max_personen:
+                    if not koker.aantal_eters + eter_toe_te_wijzen.aantal_personen > koker.max_personen:
                         if not (koker.kids == 'N' and eter_toe_te_wijzen.kids_mee == "J"):
                             geschikte_koker = koker
                             break
+
     if geschikte_koker == "":
         gelukt = False
-    return geschikte_koker, gelukt
+        print("[FAIL!!]")
+    return geschikte_koker, gelukt, lijst_kokers
 
 
 def registreer_gezien(huis1, huis2):
@@ -104,10 +116,11 @@ def verdeel_eters_voor_gang(gang, huizen):
 
     for eters in lijst_eters:
         te_verdelen_eters.append(eters)
+
     while len(te_verdelen_eters) > 0:
         eter_toe_te_wijzen = random.choice(te_verdelen_eters)
         te_verdelen_eters.remove(eter_toe_te_wijzen)
-        koker, gevonden = vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang)
+        koker, gevonden, lijst_kokers = vind_een_koker_nieuwst(lijst_kokers, lijst_eters, eter_toe_te_wijzen, gang)
         if gevonden:
             koker.aantal_eters += eter_toe_te_wijzen.aantal_personen
             koker.aantal_huizen += 1
@@ -127,7 +140,7 @@ def main():
     gelukt_hoofdgerecht = gelukt_nagerecht = indeling_gelukt = False
     lijst_na_nagerecht = []
     teller = 0
-    max_aantal_pogingen = 50
+    max_aantal_pogingen = 2
 
     while not indeling_gelukt and teller < max_aantal_pogingen:
         huizen = voorbereiding.maak_lijst_huizen_met_gang_nieuw()
@@ -140,6 +153,7 @@ def main():
             indeling_gelukt = True
             toon_output.afronden(lijst_na_nagerecht)
             toon_output.maak_excel(lijst_na_nagerecht)
+            #toon_output.maak_email(lijst_na_hoofdgerecht)
         else:
             print("[ERROR] Indeling niet gelukt. Start nieuwe poging.")
         teller += 1
